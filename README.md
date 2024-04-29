@@ -6,7 +6,7 @@ Download categories from [LSUS repo](http://dl.yf.io/lsun/objects/).
 wget -c http://dl.yf.io/lsun/objects/[category] --tries=0 --read-timeout=20 --retry-connrefused --waitretry=1
 ```
 
-Extract images for each category
+Extract images for each category.
 
 ```bash
 python utils/data_db_reader.py export [category_file] --out_dir [category_directory_extracted] --flat
@@ -29,7 +29,7 @@ data_subset<br/>
 &emsp;&emsp;[all images]<br/>
 &emsp;labels.csv<br/>
 
-Everything the new directory will be deleted
+Already existing files in the directory will be preserved. Any duplicated names will be renamed randomly. The labels file will be appended.
 
 ```bash
 python utils/data_subset.py --source=[source_directory] --target=[target_directory] --selected=[number_of_images_per_category] --seed=[random_seed]

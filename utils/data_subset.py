@@ -5,17 +5,20 @@ import random
 import string
 import csv
 
+__author__ = 'Dmitry Lukyanov'
+__email__ = 'dlukyan@clemson.edu'
+__license__ = 'MIT'
+
+
+IMAGE_SUBFOLDER = '/images'
+LABELS_FILENAME = 'labels.csv'
+
 
 def merge(source_folder, destination_folder, limit_per_category):
-    image_subfolder = '/images'
-    if os.path.exists(destination_folder):
-        print(f"Removing existing destination directory '{destination_folder}'...")
-        shutil.rmtree(destination_folder)
-    os.makedirs(destination_folder)
-    os.makedirs(destination_folder + image_subfolder)
-    
-    labels = {}
-    
+    if not os.path.exists(destination_folder):
+        os.makedirs(destination_folder)
+        os.makedirs(destination_folder + IMAGE_SUBFOLDER)
+    labels = load_labels(destination_folder)
     categories = [folder for folder in os.listdir(source_folder) if not folder.startswith('.')]
     for category in categories:
         print(f'Copying: {category}')
@@ -24,16 +27,15 @@ def merge(source_folder, destination_folder, limit_per_category):
         if os.path.isdir(category_folder):
             images = os.listdir(category_folder)
             if len(images) < limit_per_category:
-                remove_merged(destination_folder)
                 raise Exception(f'Not enough images in {category}')
             selected_images = random.sample(images, limit_per_category)
             labels.update({image: category for image in selected_images})
             for image in selected_images:
                 image_path = os.path.join(category_folder, image)
-                destination_path = os.path.join(destination_folder + image_subfolder, image)
+                destination_path = os.path.join(destination_folder + IMAGE_SUBFOLDER, image)
                 while os.path.exists(destination_path):
                     filename = generate_name() + '.' + image.split('.')[1]
-                    destination_path = os.path.join(destination_folder+ image_subfolder, filename)
+                    destination_path = os.path.join(destination_folder+ IMAGE_SUBFOLDER, filename)
                     labels[image] = category
                     print(f'Already exists: {image}. Renamed to {filename}')
                 shutil.copy(image_path, destination_path)
@@ -43,16 +45,15 @@ def merge(source_folder, destination_folder, limit_per_category):
     write_labels(destination_folder, labels)
 
 
-def remove_merged(folder):
-    if os.path.exists(folder):
-        for filename in os.listdir(folder):
-            file_path = os.path.join(folder, filename)
-            try:
-                if os.path.isfile(file_path):
-                    os.remove(file_path)
-                    print(f'Removed: {file_path}')
-            except Exception as e:
-                print(f"Error while deleting {file_path}: {e}")
+def load_labels(destination_folder):
+    labels = {}
+    csv_file = os.path.join(destination_folder, LABELS_FILENAME)
+    if os.path.exists(csv_file) and os.path.isfile(csv_file):
+        with open(csv_file, 'r') as csvfile:
+            reader = csv.reader(csvfile)
+            next(reader)
+            labels = {rows[0]: rows[1] for rows in reader}
+    return labels
 
 
 def generate_name(length=32):
@@ -61,7 +62,7 @@ def generate_name(length=32):
 
 
 def write_labels(destination_folder, labels):
-    csv_file = os.path.join(destination_folder, 'labels.csv')
+    csv_file = os.path.join(destination_folder, LABELS_FILENAME)
     with open(csv_file, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(['filename', 'label'])
