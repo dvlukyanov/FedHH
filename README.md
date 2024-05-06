@@ -12,7 +12,7 @@ Extract images for each category.
 python utils/data_db_reader.py export [category_file] --out_dir [category_directory_extracted] --flat
 ```
 
-Randomly pick N images from each category, label them and save in a new directory.<br/>
+Randomly pick N images from each category, label them and save into a new directory.<br/>
 Each original category directory should be within a common one. E.g.,<br/>
 
 data<br/>
@@ -29,8 +29,14 @@ data_subset<br/>
 &emsp;&emsp;[all images]<br/>
 &emsp;labels.csv<br/>
 
-Already existing files in the directory will be preserved. Any duplicated names will be renamed randomly. The labels file will be appended.
+Already existing files in the directory will be preserved. Any duplicated names will be renamed randomly. The labels file will be appended. Thus, categories can be merged one by one.
 
 ```bash
 python utils/data_subset.py --source=[source_directory] --target=[target_directory] --selected=[number_of_images_per_category] --seed=[random_seed]
+```
+
+From the subset of data extract a subsubset for model tuning. An equal number of samples is randomly chosen from each category. The target directory will be recreated.
+
+```bash
+python utils/data_tuning.py --source=[source_directory] --target=[target_directory] --selected=[number_of_images_per_category] --seed=[random_seed]
 ```
