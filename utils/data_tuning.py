@@ -2,6 +2,7 @@ import argparse
 import os
 import shutil
 import random
+import tqdm
 from shared import load_labels, write_labels, IMAGE_SUBFOLDER, LABELS_FILENAME
 
 __author__ = 'Dmitry Lukyanov'
@@ -18,7 +19,7 @@ def pick(source_folder, destination_folder, limit_per_category):
     if limit_per_category > min([list(labels.values()).count(cat) for cat in set(labels.values())]):
         raise Exception(f'Some categories contain less than {limit_per_category} labels')
     labels = {file: cat for cat in set(labels.values()) for file in random.sample([file for file, label_cat in labels.items() if label_cat == cat], limit_per_category)}
-    for file, _ in labels.items():
+    for file, _ in tqdm.tqdm(labels.items()):
         source_path = os.path.join(source_folder, IMAGE_SUBFOLDER, file)
         destination_path = os.path.join(destination_folder, IMAGE_SUBFOLDER, file)
         shutil.copy(source_path, destination_path)
