@@ -1,0 +1,12 @@
+used categories
+
++airplane
++bus
++cat
++cow
++motorbike
++sheep
++train
++potted_plant
++tv-monitor
++dining_table

@@ -1,6 +1,6 @@
 # Data Acquiring
 
-Download categories from [LSUS repo](http://dl.yf.io/lsun/objects/).
+Download categories from [LSUN repo](http://dl.yf.io/lsun/objects/).
 
 ```bash
 wget -c http://dl.yf.io/lsun/objects/[category] --tries=0 --read-timeout=20 --retry-connrefused --waitretry=1
