@@ -1,3 +1,13 @@
+from .cnn import CustomCNNModel
+from .densenet121 import DenseNet121Model
+from .efficientnet_b0 import EfficientNet_B0Model
+from .googlenet import GoogLeNetModel
+from .mobilenetv2 import MobileNetV2Model
+from .mobilenetv3 import MobileNetV3SmallModel
+from .mobilevitv2 import MobileViTV2
+from .resnet18 import ResNet18Model
+from .shufflenetv2x1_5 import ShuffleNetV2x1_5Model
+from .squeezenet import SqueezeNetModel
 
 
 __author__ = 'Dmitry Lukyanov'
@@ -7,6 +17,25 @@ __license__ = 'MIT'
 
 class ModelFactory:
     
-    def create_model(self, model_name):
+    @staticmethod
+    def create_model(model_name, trial=None):
         if model_name == 'cnn':
-            return CustomCNNModel
+            return CustomCNNModel(trial)
+        elif model_name == 'densenet121':
+            return DenseNet121Model(trial)
+        elif model_name == 'efficientnetb0':
+            return EfficientNet_B0Model(trial)
+        elif model_name == 'googlenet':
+            return GoogLeNetModel(trial)
+        elif model_name == 'mobilenetv2':
+            return MobileNetV2Model(trial)
+        elif model_name == 'mobilenetv3small':
+            return MobileNetV3SmallModel(trial)
+        elif model_name == 'mobilevitv2':
+            return MobileViTV2(trial)
+        elif model_name == 'resnet18':
+            return ResNet18Model(trial)
+        elif model_name == 'shufflenetv2':
+            return ShuffleNetV2x1_5Model(trial)
+        elif model_name == 'squeezenet':
+            return SqueezeNetModel(trial)

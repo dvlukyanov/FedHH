@@ -5,8 +5,7 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, random_split
 from torchvision import datasets, transforms
-from models.resnet18 import ResNet18Model
-from models.cnn import CustomCNNModel
+from models.model_factory import ModelFactory
 
 
 __author__ = 'Dmitry Lukyanov'
@@ -25,8 +24,7 @@ def objective(trial):
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     valid_loader = DataLoader(valid_dataset, batch_size=batch_size, shuffle=False)
 
-    # model_instance = ResNet18Model(trial)
-    model_instance = CustomCNNModel(trial)
+    model_instance = ModelFactory.create_model('cnn', trial)
 
     model = model_instance.get_model()
     optimizer = model_instance.get_tuning_optimizer(model)
