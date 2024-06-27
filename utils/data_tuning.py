@@ -5,6 +5,7 @@ import random
 import tqdm
 from shared import load_labels, write_labels, IMAGE_SUBFOLDER, LABELS_FILENAME
 
+
 __author__ = 'Dmitry Lukyanov'
 __email__ = 'dmitry@dmitrylukyanov.com'
 __license__ = 'MIT'

@@ -1,5 +1,4 @@
 import torch.nn as nn
-import torch.optim as optim
 import torch.nn.functional as F
 from .base_model import BaseModel
 
@@ -47,7 +46,3 @@ class CustomCNNModel(BaseModel):
             dropout = 0.3
         model = CustomCNN(conv1_out_channels, conv2_out_channels, dropout)
         return model
-
-    def get_tuning_optimizer(self, model):
-        learning_rate = self.trial.suggest_float('learning_rate', 1e-5, 1e-2, log=True) if self.trial else 1e-3
-        return optim.Adam(model.parameters(), lr=learning_rate)

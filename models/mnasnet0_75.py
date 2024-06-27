@@ -1,4 +1,3 @@
-import torch.optim as optim
 from torchvision.models import mnasnet0_75
 from .base_model import BaseModel
 
@@ -12,7 +11,3 @@ class MNASNet0_75Model(BaseModel):
 
     def get_model(self):
         return mnasnet0_75(parameters=None, num_classes=10)
-
-    def get_tuning_optimizer(self, model):
-        # TODO
-        pass

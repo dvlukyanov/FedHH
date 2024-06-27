@@ -6,6 +6,7 @@ import numpy
 import os
 from os.path import exists, join
 
+
 __author__ = 'Fisher Yu'
 __email__ = 'fy@cs.princeton.edu'
 __license__ = 'MIT'

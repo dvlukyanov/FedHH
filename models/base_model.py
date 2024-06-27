@@ -1,4 +1,5 @@
 import torch
+import torch.optim as optim
 
 
 __author__ = 'Dmitry Lukyanov'
@@ -12,9 +13,16 @@ class BaseModel:
 
     def get_model(self):
         raise NotImplementedError
+    
+    def get_resize_transform(self):
+        raise NotImplementedError
+    
+    def get_normalize_transform(self):
+        raise NotImplementedError
 
     def get_tuning_optimizer(self, model):
-        raise NotImplementedError
+        learning_rate = self.trial.suggest_float('learning_rate', 1e-5, 1e-2, log=True) if self.trial else 1e-3
+        return optim.Adam(model.parameters(), lr=learning_rate)
 
     def train_model(self, model, train_loader, criterion, optimizer, device):
         model.train()

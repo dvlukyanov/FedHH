@@ -1,6 +1,7 @@
 import os
 import csv
 
+
 __author__ = 'Dmitry Lukyanov'
 __email__ = 'dmitry@dmitrylukyanov.com'
 __license__ = 'MIT'

@@ -1,5 +1,5 @@
 import torch
-import torch.optim as optim
+from torchvision import transforms
 from .base_model import BaseModel
 
 
@@ -15,6 +15,8 @@ class SqueezeNetModel(BaseModel):
         model.eval()
         return model
     
-    def get_tuning_optimizer(self, model):
-        learning_rate = self.trial.suggest_float('learning_rate', 1e-5, 1e-2, log=True) if self.trial else 1e-3
-        return optim.Adam(model.parameters(), lr=learning_rate)
+    def get_resize_transform(self):
+        return transforms.Resize(256)
+    
+    def get_normalize_transform(self):
+        return transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
