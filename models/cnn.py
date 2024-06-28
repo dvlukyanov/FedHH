@@ -2,7 +2,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 from .base_model import BaseModel
 
-
 __author__ = 'Dmitry Lukyanov'
 __email__ = 'dmitry@dmitrylukyanov.com'
 __license__ = 'MIT'
@@ -11,22 +10,38 @@ __license__ = 'MIT'
 class CustomCNNModel(BaseModel):
     def get_model(self):
         class CustomCNN(nn.Module):
-            def __init__(self, conv1_out_channels, conv2_out_channels, dropout):
+            def __init__(self, conv_layers, fc_layers, dropout):
                 super(CustomCNN, self).__init__()
-                self.conv1 = nn.Conv2d(3, conv1_out_channels, kernel_size=3, stride=1, padding=1)
-                self.conv2 = nn.Conv2d(conv1_out_channels, conv2_out_channels, kernel_size=3, stride=1, padding=1)
-                self.fc1 = nn.Linear(conv2_out_channels * 8 * 8, 256)
-                self.fc2 = nn.Linear(256, 10)
+
+                self.conv_layers = nn.ModuleList()
+                in_channels = 3
+                for out_channels in conv_layers:
+                    self.conv_layers.append(nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=1, padding=1))
+                    in_channels = out_channels
+
                 self.pool = nn.MaxPool2d(kernel_size=2, stride=2, padding=0)
+
+                # Assuming input image size is 32x32
+                conv_output_size = 32 // (2 ** len(conv_layers))
+                num_flat_features = conv_layers[-1] * conv_output_size * conv_output_size
+
+                self.fc_layers = nn.ModuleList()
+                in_features = num_flat_features
+                for out_features in fc_layers:
+                    self.fc_layers.append(nn.Linear(in_features, out_features))
+                    in_features = out_features
+
                 self.dropout = nn.Dropout(dropout)
+                self.output_layer = nn.Linear(fc_layers[-1], 10)
 
             def forward(self, x):
-                x = self.pool(F.relu(self.conv1(x)))
-                x = self.pool(F.relu(self.conv2(x)))
+                for conv in self.conv_layers:
+                    x = self.pool(F.relu(conv(x)))
                 x = x.view(-1, self.num_flat_features(x))
-                x = F.relu(self.fc1(x))
-                x = self.dropout(x)
-                x = self.fc2(x)
+                for fc in self.fc_layers:
+                    x = F.relu(fc(x))
+                    x = self.dropout(x)
+                x = self.output_layer(x)
                 return x
 
             def num_flat_features(self, x):
@@ -37,12 +52,21 @@ class CustomCNNModel(BaseModel):
                 return num_features
 
         if self.trial:
-            conv1_out_channels = self.trial.suggest_int('conv1_out_channels', 16, 64)
-            conv2_out_channels = self.trial.suggest_int('conv2_out_channels', 32, 128)
+            conv_layers = []
+            num_conv_layers = self.trial.suggest_int('num_conv_layers', 1, 3)
+            for i in range(num_conv_layers):
+                conv_layers.append(self.trial.suggest_int(f'conv{i + 1}_out_channels', 16, 128))
+
+            fc_layers = []
+            num_fc_layers = self.trial.suggest_int('num_fc_layers', 1, 3)
+            for i in range(num_fc_layers):
+                fc_layers.append(self.trial.suggest_int(f'fc{i + 1}_size', 64, 512))
+
             dropout = self.trial.suggest_float('dropout', 0.25, 0.5)
         else:
-            conv1_out_channels = 16
-            conv2_out_channels = 64
+            conv_layers = [16, 64]
+            fc_layers = [256]
             dropout = 0.3
-        model = CustomCNN(conv1_out_channels, conv2_out_channels, dropout)
+
+        model = CustomCNN(conv_layers, fc_layers, dropout)
         return model
