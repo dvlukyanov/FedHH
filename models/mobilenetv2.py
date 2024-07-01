@@ -10,4 +10,10 @@ __license__ = 'MIT'
 class MobileNetV2Model(BaseModel):
 
     def get_model(self):
-        return mobilenet_v2(parameters=None, num_classes=10)
+        return mobilenet_v2(weights=None, num_classes=10)
+    
+    def get_tuning_optimizer(self, model):
+        return super().get_tuning_optimizer(model)
+    
+    def get_logits(self, outputs):
+        return super().get_logits(outputs)

@@ -15,8 +15,8 @@ class SqueezeNetModel(BaseModel):
         model.eval()
         return model
     
-    def get_resize_transform(self):
-        return transforms.Resize(256)
+    def get_tuning_optimizer(self, model):
+        return super().get_tuning_optimizer(model)
     
-    def get_normalize_transform(self):
-        return transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+    def get_logits(self, outputs):
+        return super().get_logits(outputs)

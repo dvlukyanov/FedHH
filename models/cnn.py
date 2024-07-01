@@ -2,8 +2,9 @@ import torch.nn as nn
 import torch.nn.functional as F
 from .base_model import BaseModel
 
-__author__ = 'Dmitry Lukyanov'
-__email__ = 'dmitry@dmitrylukyanov.com'
+
+__author__ = 'Dmitry Lukyanov, Huaye Li'
+__email__ = 'dmitry@dmitrylukyanov.com, huayel@g.clemson.edu'
 __license__ = 'MIT'
 
 
@@ -70,3 +71,9 @@ class CustomCNNModel(BaseModel):
 
         model = CustomCNN(conv_layers, fc_layers, dropout)
         return model
+    
+    def get_tuning_optimizer(self, model):
+        return super().get_tuning_optimizer(model)
+    
+    def get_logits(self, outputs):
+        return super().get_logits(outputs)
