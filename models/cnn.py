@@ -22,8 +22,8 @@ class CustomCNNModel(BaseModel):
 
                 self.pool = nn.MaxPool2d(kernel_size=2, stride=2, padding=0)
 
-                # Assuming input image size is 32x32
-                conv_output_size = 32 // (2 ** len(conv_layers))
+                # Assuming input image size is 256x256
+                conv_output_size = 256 // (2 ** len(conv_layers))
                 num_flat_features = conv_layers[-1] * conv_output_size * conv_output_size
 
                 self.fc_layers = nn.ModuleList()
@@ -54,19 +54,19 @@ class CustomCNNModel(BaseModel):
 
         if self.trial:
             conv_layers = []
-            num_conv_layers = self.trial.suggest_int('num_conv_layers', 1, 3)
+            num_conv_layers = self.trial.suggest_int('num_conv_layers', 1, 6)
             for i in range(num_conv_layers):
-                conv_layers.append(self.trial.suggest_int(f'conv{i + 1}_out_channels', 16, 128))
+                conv_layers.append(self.trial.suggest_int(f'conv{i + 1}_out_channels', 16, 256))
 
             fc_layers = []
             num_fc_layers = self.trial.suggest_int('num_fc_layers', 1, 3)
             for i in range(num_fc_layers):
-                fc_layers.append(self.trial.suggest_int(f'fc{i + 1}_size', 64, 512))
+                fc_layers.append(self.trial.suggest_int(f'fc{i + 1}_size', 64, 4096))
 
             dropout = self.trial.suggest_float('dropout', 0.25, 0.5)
         else:
-            conv_layers = [16, 64]
-            fc_layers = [256]
+            conv_layers = [16,32,64,128,256,256]
+            fc_layers = [1024,512,256]
             dropout = 0.3
 
         model = CustomCNN(conv_layers, fc_layers, dropout)
