@@ -11,7 +11,7 @@ __email__ = 'dmitry@dmitrylukyanov.com'
 __license__ = 'MIT'
 
 
-def merge(source_folder, destination_folder, limit_per_category):
+def merge(source_folder, destination_folder, limit_per_category, seed):
     if not os.path.exists(destination_folder):
         os.makedirs(destination_folder)
     if not os.path.exists(os.path.join(destination_folder, IMAGE_SUBFOLDER)):
@@ -26,6 +26,7 @@ def merge(source_folder, destination_folder, limit_per_category):
             images = os.listdir(category_folder)
             if len(images) < limit_per_category:
                 raise Exception(f'Not enough images in {category}')
+            random.seed(seed)
             selected_images = random.sample(images, limit_per_category)
             for image in selected_images:
                 filename = image
@@ -57,7 +58,7 @@ def main():
     args = parser.parse_args()
 
     random.seed(args.seed)
-    merge(args.source, args.target, args.selected)
+    merge(args.source, args.target, args.selected, args.seed)
 
 
 if __name__ == '__main__':
