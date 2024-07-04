@@ -76,4 +76,4 @@ class CustomCNNModel(BaseModel):
         return super().get_tuning_optimizer(model)
     
     def get_logits(self, outputs):
-        return super().get_logits(outputs)
+        return outputs

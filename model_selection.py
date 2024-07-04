@@ -17,7 +17,7 @@ __license__ = 'MIT'
 def objective(trial, model_name, img_dir, labels_file):
     batch_size = 64
 
-    dataset = CustomImageDataset(img_dir='data/tuning/images', labels_file='data/tuning/labels.csv')
+    dataset = CustomImageDataset(img_dir=img_dir, labels_file=labels_file)
     train_size = int(0.8 * len(dataset))
     valid_size = len(dataset) - train_size
     train_dataset, valid_dataset = random_split(dataset, [train_size, valid_size])
