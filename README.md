@@ -40,3 +40,12 @@ From the subset of data extract a subsubset for model tuning. An equal number of
 ```bash
 python utils/data_tuning.py --source=[source_directory] --target=[target_directory] --selected=[number_of_images_per_category] --seed=[random_seed]
 ```
+
+<br/>
+<br/>
+
+# Model selection
+
+```bash
+python utils/model_selection.py --model=[model] --img_dir=[image_directory] --labels_file=[labels_file_path] --seed=[random_seed]
+```

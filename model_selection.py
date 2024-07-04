@@ -1,5 +1,6 @@
 import sys
 import logging
+import argparse
 import optuna
 import torch
 import torch.nn as nn
@@ -13,17 +14,17 @@ __email__ = 'dmitry@dmitrylukyanov.com'
 __license__ = 'MIT'
 
 
-def objective(trial):
+def objective(trial, model_name, img_dir, labels_file):
     batch_size = 64
 
-    dataset = CustomImageDataset(img_dir='data/tuning/images', labels_file='data/tuning/labels.csv')
+    dataset = CustomImageDataset(img_dir=img_dir, labels_file=labels_file)
     train_size = int(0.8 * len(dataset))
     valid_size = len(dataset) - train_size
     train_dataset, valid_dataset = random_split(dataset, [train_size, valid_size])
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     valid_loader = DataLoader(valid_dataset, batch_size=batch_size, shuffle=False)
 
-    model_instance = ModelFactory.create_model('googlenet', trial)
+    model_instance = ModelFactory.create_model(model_name, trial)
 
     model = model_instance.get_model()
     optimizer = model_instance.get_tuning_optimizer(model)
@@ -44,12 +45,17 @@ def objective(trial):
     return accuracy
 
 
-SEED = 0
+parser = argparse.ArgumentParser()
+parser.add_argument('--model', type=str, required=True, help='Model for tuning')
+parser.add_argument('--img_dir', type=str, required=True, help='Directory path for images')
+parser.add_argument('--labels_file', type=str, required=True, help='Path to the labels file')
+parser.add_argument('--seed', type=int, required=True, help='Seed')
+args = parser.parse_args()
 
 optuna.logging.get_logger("optuna").addHandler(logging.StreamHandler(sys.stdout))
 optuna.logging.set_verbosity(optuna.logging.DEBUG)
-study = optuna.create_study(direction='maximize', sampler=optuna.samplers.TPESampler(seed=SEED), pruner=optuna.pruners.HyperbandPruner())
-study.optimize(objective, n_trials=200)
+study = optuna.create_study(direction='maximize', sampler=optuna.samplers.TPESampler(seed=args.seed), pruner=optuna.pruners.HyperbandPruner())
+study.optimize(lambda trial: objective(trial, args.model, args.img_dir, args.labels_file), n_trials=200)
 
 print('Best trial:')
 trial = study.best_trial
