@@ -47,5 +47,5 @@ python utils/data_tuning.py --source=[source_directory] --target=[target_directo
 # Model selection
 
 ```bash
-python utils/model_selection.py --model=[model] --img_dir=[image_directory] --labels_file=[labels_file_path] --seed=[random_seed]
+python model_selection.py --model=[model] --img_dir=[image_directory] --labels_file=[labels_file_path] --seed=[random_seed]
 ```
