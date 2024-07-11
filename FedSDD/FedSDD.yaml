@@ -1,0 +1,29 @@
+server:
+    epochs: 200
+    group_num: 4
+    temporal_ensemble_rounds: 4
+    knowledge_transfer:
+        client_qnt: 3
+        epochs: 10
+        batch_size: 64
+        temperature: 2
+
+
+client:
+    qnt: 20
+    models:
+        - mobilenetv2
+        - resnet
+        - simple_cnn
+    training:
+        epochs: 5
+        batch_size: 64
+storage:
+    data:
+        path: '../storage/data2'
+    model:
+        path: '../storage/model/fedsdd'
+        name:
+            server: 'model_server_{0}_{1}.pt' # {0} - type, {1} - round
+            client: 'model_client_{0}_{1}.pt' # {0} - round, {1} - client id
+seed: 12345
