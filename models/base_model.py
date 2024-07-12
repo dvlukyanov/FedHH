@@ -54,6 +54,8 @@ class BaseModel:
         return scheduler
 
     def get_logits(self, outputs):
+        if isinstance(outputs, torch.Tensor):
+            return outputs
         return outputs.logits
 
     def train_model(self, model, train_loader, criterion, optimizer, scheduler, device):
