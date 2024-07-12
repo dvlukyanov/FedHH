@@ -27,12 +27,21 @@ class CustomImageDataset(Dataset):
         return len(self.img_labels)
 
     def __getitem__(self, idx):
-        img_path = os.path.join(self.img_dir, str(self.file_names[idx]))
-        image = Image.open(img_path).convert("RGB")
-        image = self.__get_transform()(image)
-        # label = self.img_labels[idx][1]
-        label = self.img_labels[idx].argmax().item()
-        return image, label
+        try:
+            img_path = os.path.join(self.img_dir, str(self.file_names[idx]))
+            image = Image.open(img_path).convert("RGB")
+            image = self.__get_transform()(image)
+            label = self.img_labels[idx].argmax().item()
+            return image, label
+        except Exception as e:
+            print(f"Skipping file {self.file_names[idx]} due to error: {e}")
+            return None
+        
+    def __iter__(self):
+        for i in range(len(self)):
+            item = self[i]
+            if item is not None:
+                yield item
     
     def __get_transform(self):
         return transforms.Compose([

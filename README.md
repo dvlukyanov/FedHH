@@ -6,10 +6,16 @@ Download categories from [LSUN repo](http://dl.yf.io/lsun/objects/).
 wget -c http://dl.yf.io/lsun/objects/[category] --tries=0 --read-timeout=20 --retry-connrefused --waitretry=1
 ```
 
+Unarchive the database.
+
+```bash
+unzip [category_archive]
+```
+
 Extract images for each category.
 
 ```bash
-python utils/data_db_reader.py export [category_file] --out_dir [category_directory_extracted] --flat
+python utils/data_db_reader.py export [category_directory] --out_dir [category_directory_extracted] --flat
 ```
 
 Randomly pick N images from each category, label them and save into a new directory.<br/>
