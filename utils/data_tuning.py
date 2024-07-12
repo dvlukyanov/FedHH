@@ -37,7 +37,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--source', type=str, default='')
     parser.add_argument('--target', type=str, default='')
-    parser.add_argument('--selected', type=int, default=None)
+    parser.add_argument('--selected', type=int, default=10000)
     parser.add_argument('--seed', type=int, default=0)
     args = parser.parse_args()
 
