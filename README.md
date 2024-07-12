@@ -1,3 +1,10 @@
+<!--
+__author__ = 'Dmitry Lukyanov, Huaye Li'
+__email__ = 'dmitry@dmitrylukyanov.com, huayel@g.clemson.edu'
+__license__ = 'MIT'
+-->
+
+
 # Data Acquiring
 
 Download categories from [LSUN repo](http://dl.yf.io/lsun/objects/).

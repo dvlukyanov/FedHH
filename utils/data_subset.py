@@ -4,10 +4,12 @@ import shutil
 import random
 import string
 from shared import load_labels, write_labels, IMAGE_SUBFOLDER, LABELS_FILENAME
+from tqdm import tqdm
+from PIL import Image
 
 
-__author__ = 'Dmitry Lukyanov'
-__email__ = 'dmitry@dmitrylukyanov.com'
+__author__ = 'Dmitry Lukyanov, Huaye Li'
+__email__ = 'dmitry@dmitrylukyanov.com, huayel@g.clemson.edu'
 __license__ = 'MIT'
 
 
@@ -24,6 +26,8 @@ def merge(source_folder, destination_folder, limit_per_category, seed):
         category_folder = os.path.join(source_folder, category)
         if os.path.isdir(category_folder):
             images = os.listdir(category_folder)
+            print('Filtering invalid images...')
+            images = [image for image in tqdm(images) if is_valid(image)]
             if len(images) < limit_per_category:
                 raise Exception(f'Not enough images in {category}')
             random.seed(seed)
@@ -42,6 +46,16 @@ def merge(source_folder, destination_folder, limit_per_category, seed):
                 if cnt % 1000 == 0:
                     print(f'{cnt} images are merged')
     write_labels(destination_folder, LABELS_FILENAME, labels)
+
+
+def is_valid(image):
+    try:
+        with Image.open(image) as img:
+            img.verify()
+        return True
+    except (IOError) as e:
+        print(f'{image} is invalid and will be skipped')
+        return False
 
 
 def generate_name(length=40):

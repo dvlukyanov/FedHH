@@ -2,8 +2,8 @@ import torch
 import torch.optim as optim
 
 
-__author__ = 'Dmitry Lukyanov'
-__email__ = 'dmitry@dmitrylukyanov.com'
+__author__ = 'Dmitry Lukyanov, Huaye Li'
+__email__ = 'dmitry@dmitrylukyanov.com, huayel@g.clemson.edu'
 __license__ = 'MIT'
 
 
