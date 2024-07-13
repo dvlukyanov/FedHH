@@ -27,7 +27,7 @@ def merge(source_folder, destination_folder, limit_per_category, seed):
         if os.path.isdir(category_folder):
             images = os.listdir(category_folder)
             print('Filtering invalid images...')
-            images = [image for image in tqdm(images) if is_valid(image)]
+            images = [image for image in tqdm(images) if is_valid(os.path.join(category_folder, image))]
             if len(images) < limit_per_category:
                 raise Exception(f'Not enough images in {category}')
             random.seed(seed)
