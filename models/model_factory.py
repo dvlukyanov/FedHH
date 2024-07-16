@@ -7,6 +7,7 @@ from .mobilenetv3 import MobileNetV3SmallModel
 from .resnet18 import ResNet18Model
 from .shufflenetv2x1_5 import ShuffleNetV2x1_5Model
 from .squeezenet import SqueezeNetModel
+from .mnasnet0_75 import MNASNet0_75Model
 
 
 __author__ = 'Dmitry Lukyanov'
