@@ -1,3 +1,4 @@
+import os
 import sys
 import logging
 import argparse
@@ -9,25 +10,39 @@ from models.model_factory import ModelFactory
 from data.dataset import CustomImageDataset
 
 
-__author__ = 'Dmitry Lukyanov'
-__email__ = 'dmitry@dmitrylukyanov.com'
+__author__ = 'Dmitry Lukyanov, Huaye Li'
+__email__ = 'dmitry@dmitrylukyanov.com, huayel@g.clemson.edu'
 __license__ = 'MIT'
 
 
+torch.autograd.profiler.profile(enabled=False)
+torch.autograd.profiler.emit_nvtx(enabled=False)
+torch.autograd.set_detect_anomaly(False, check_nan=True)
+#torch.set_float32_matmul_precision('high')
+
+
+BATCH_SIZE = 64
+DATA_LOADER_WORKERS = 2
+
+
+print(f'CUDA devices: {torch.cuda.device_count()}')
+
+
 def objective(trial, model_name, img_dir, labels_file):
-    batch_size = 64
+    batch_size = BATCH_SIZE * torch.cuda.device_count()
 
     dataset = CustomImageDataset(img_dir=img_dir, labels_file=labels_file)
     train_size = int(0.8 * len(dataset))
     valid_size = len(dataset) - train_size
     train_dataset, valid_dataset = random_split(dataset, [train_size, valid_size])
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-    valid_loader = DataLoader(valid_dataset, batch_size=batch_size, shuffle=False)
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=DATA_LOADER_WORKERS*torch.cuda.device_count(), prefetch_factor=DATA_LOADER_WORKERS*4, pin_memory=True)
+    valid_loader = DataLoader(valid_dataset, batch_size=batch_size, shuffle=False, num_workers=DATA_LOADER_WORKERS*torch.cuda.device_count(), prefetch_factor=DATA_LOADER_WORKERS*4, pin_memory=True)
 
     model_instance = ModelFactory.create_model(model_name, trial)
 
     model = model_instance.get_model()
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print(device)
 
     if torch.cuda.device_count() > 1:
         model = nn.DataParallel(model)
@@ -55,6 +70,8 @@ parser.add_argument('--img_dir', type=str, required=True, help='Directory path f
 parser.add_argument('--labels_file', type=str, required=True, help='Path to the labels file')
 parser.add_argument('--seed', type=int, required=True, help='Seed')
 args = parser.parse_args()
+
+print(args)
 
 optuna.logging.get_logger("optuna").addHandler(logging.StreamHandler(sys.stdout))
 optuna.logging.set_verbosity(optuna.logging.DEBUG)
