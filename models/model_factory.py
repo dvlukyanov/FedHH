@@ -36,3 +36,5 @@ class ModelFactory:
             return ShuffleNetV2x1_5Model(trial)
         elif model_name == 'squeezenet':
             return SqueezeNetModel(trial)
+        elif model_name == 'mnasnet0_75':
+            return MNASNet0_75Model(trial)
