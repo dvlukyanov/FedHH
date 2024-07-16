@@ -27,6 +27,12 @@ def objective(trial, model_name, img_dir, labels_file):
     model_instance = ModelFactory.create_model(model_name, trial)
 
     model = model_instance.get_model()
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    if torch.cuda.device_count() > 1:
+        model = nn.DataParallel(model)
+
+    model.to(device)
     optimizer = model_instance.get_tuning_optimizer(model)
     scheduler = model_instance.get_tuning_scheduler(optimizer)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
