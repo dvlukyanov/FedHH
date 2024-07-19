@@ -21,7 +21,7 @@ torch.autograd.set_detect_anomaly(False, check_nan=True)
 #torch.set_float32_matmul_precision('high')
 
 
-BATCH_SIZE = 64
+BATCH_SIZE = 32
 DATA_LOADER_WORKERS = 2
 
 
