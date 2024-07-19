@@ -17,10 +17,13 @@ class CustomCNNModel(BaseModel):
                 self.conv_layers = nn.ModuleList()
                 in_channels = 3
                 for out_channels in conv_layers:
-                    self.conv_layers.append(nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=1, padding=1))
+                    self.conv_layers.append(
+                        nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=1, padding=1),
+                        nn.BatchNorm2d(out_channels),
+                        nn.ReLU(),
+                        nn.MaxPool2d(kernel_size=2, stride=2, padding=0)
+                    )
                     in_channels = out_channels
-
-                self.pool = nn.MaxPool2d(kernel_size=2, stride=2, padding=0)
 
                 # Assuming input image size is 256x256
                 conv_output_size = 256 // (2 ** len(conv_layers))
@@ -29,19 +32,22 @@ class CustomCNNModel(BaseModel):
                 self.fc_layers = nn.ModuleList()
                 in_features = num_flat_features
                 for out_features in fc_layers:
-                    self.fc_layers.append(nn.Linear(in_features, out_features))
+                    self.fc_layers.append(nn.Sequential(
+                        nn.Linear(in_features, out_features),
+                        nn.BatchNorm1d(out_features),
+                        nn.ReLU(inplace=True),
+                        nn.Dropout(dropout)
+                    ))
                     in_features = out_features
 
-                self.dropout = nn.Dropout(dropout)
                 self.output_layer = nn.Linear(fc_layers[-1], 10)
 
             def forward(self, x):
                 for conv in self.conv_layers:
-                    x = self.pool(F.relu(conv(x)))
+                    x = conv(x)
                 x = x.view(-1, self.num_flat_features(x))
                 for fc in self.fc_layers:
-                    x = F.relu(fc(x))
-                    x = self.dropout(x)
+                    x = fc(x)
                 x = self.output_layer(x)
                 return x
 
