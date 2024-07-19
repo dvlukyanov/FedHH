@@ -60,23 +60,22 @@ class CustomCNNModel(BaseModel):
 
         if self.trial:
             conv_layers = []
-            num_conv_layers = self.trial.suggest_int('num_conv_layers', 1, 2)
+            num_conv_layers = self.trial.suggest_int('num_conv_layers', 1, 3)
             for i in range(num_conv_layers):
-                conv_layers.append(self.trial.suggest_int(f'conv{i + 1}_out_channels', 4, 64))
+                conv_layers.append(self.trial.suggest_int(f'conv{i + 1}_out_channels', 4, 128))
 
             fc_layers = []
-            num_fc_layers = self.trial.suggest_int('num_fc_layers', 1, 2)
+            num_fc_layers = self.trial.suggest_int('num_fc_layers', 1, 1)
             for i in range(num_fc_layers):
                 fc_layers.append(self.trial.suggest_int(f'fc{i + 1}_size', 16, 256))
 
-            dropout = self.trial.suggest_float('dropout', 0.25, 0.5)
+            dropout = self.trial.suggest_float('dropout', 0.1, 0.9)
         else:
             conv_layers = [16, 32]
             fc_layers = [256, 128]
             dropout = 0.3
 
-        model = CustomCNN(conv_layers, fc_layers, dropout)
-        return model
+        return CustomCNN(conv_layers, fc_layers, dropout)
     
     def get_tuning_optimizer(self, model):
         return super().get_tuning_optimizer(model)
