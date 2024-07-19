@@ -17,12 +17,12 @@ class CustomCNNModel(BaseModel):
                 self.conv_layers = nn.ModuleList()
                 in_channels = 3
                 for out_channels in conv_layers:
-                    self.conv_layers.append(
+                    self.conv_layers.append(nn.Sequential(
                         nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=1, padding=1),
                         nn.BatchNorm2d(out_channels),
                         nn.ReLU(),
                         nn.MaxPool2d(kernel_size=2, stride=2, padding=0)
-                    )
+                    ))
                     in_channels = out_channels
 
                 # Assuming input image size is 256x256
