@@ -36,7 +36,7 @@ python code/utils/data_db_reader.py export [category_directory] --out_dir [categ
 ```
 for example
 ```bash
-python code/utils/data_db_reader.py export data/original/sheep --out-dir data/extracted/sheep --flat
+python code/utils/data_db_reader.py export data/original/sheep --out_dir data/extracted/sheep --flat
 ```
 
 Randomly pick N images from each category, label them and save into a new directory.<br/>
