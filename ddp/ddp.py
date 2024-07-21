@@ -72,7 +72,7 @@ def train(model, train_loader, optimizer, loss_fn, accelerator, num_epochs=10):
         epoch_loss = 0.0
         epoch_accuracy = 0.0
         for batch in train_loader:
-            # optimizer.zero_grad()
+            optimizer.zero_grad()
             inputs, targets = batch
             inputs, targets = inputs.to(device), targets.to(device)  # Move data to the right device
             outputs = model(inputs)
