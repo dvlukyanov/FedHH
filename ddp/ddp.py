@@ -65,6 +65,7 @@ def evaluate_model(model, dataloader, loss_fn, accelerator):
 def train(model, train_loader, optimizer, loss_fn, accelerator, num_epochs=10):
     model, optimizer, train_loader = accelerator.prepare(model, optimizer, train_loader)
     device = accelerator.device  # Get the device from the accelerator
+    print(device)
     
     for epoch in range(num_epochs):
         model.train()
