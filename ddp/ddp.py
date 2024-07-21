@@ -6,6 +6,9 @@ from torch.utils.data import DataLoader
 from torch.utils.data.distributed import DistributedSampler
 from torchvision import datasets, transforms
 from torchvision.models import resnet18
+from accelerate.utils import set_seed
+
+set_seed(0)
 
 # Initialize the Accelerator
 accelerator = Accelerator()
@@ -21,17 +24,17 @@ train_dataset = datasets.CIFAR10(root='./ddp/data', train=True, download=True, t
 val_dataset = datasets.CIFAR10(root='./ddp/data', train=False, download=True, transform=transform)
 
 # Use DistributedSampler to partition the dataset among the nodes
-train_sampler = DistributedSampler(train_dataset, num_replicas=accelerator.num_processes, rank=accelerator.process_index, shuffle=True)
+train_sampler = DistributedSampler(train_dataset, num_replicas=accelerator.num_processes, rank=accelerator.process_index, shuffle=False)
 val_sampler = DistributedSampler(val_dataset, num_replicas=accelerator.num_processes, rank=accelerator.process_index, shuffle=False)
 
-train_loader = DataLoader(train_dataset, batch_size=32, sampler=train_sampler)
-val_loader = DataLoader(val_dataset, batch_size=32, sampler=val_sampler)
+train_loader = DataLoader(train_dataset, batch_size=50, sampler=train_sampler)
+val_loader = DataLoader(val_dataset, batch_size=50, sampler=val_sampler)
 
 # Initialize ResNet-18 model
 model = resnet18(weights=None, num_classes=10)  # CIFAR-10 has 10 classes
 
 # Initialize optimizer and loss function
-optimizer = optim.Adam(model.parameters(), lr=0.001)
+optimizer = optim.Adam(model.parameters(), lr=0.001 * accelerator.num_processes)
 loss_fn = nn.CrossEntropyLoss()
 
 # Prepare everything with accelerator
@@ -80,12 +83,12 @@ def train(model, train_loader, optimizer, loss_fn, accelerator, num_epochs=10):
         total_samples = 0
 
         for batch in train_loader:
+            optimizer.zero_grad()
             inputs, targets = batch
             inputs, targets = inputs.to(device), targets.to(device)  # Move data to the right device
             outputs = model(inputs)
             loss = loss_fn(outputs, targets)
             
-            optimizer.zero_grad()
             accelerator.backward(loss)
             optimizer.step()
 
