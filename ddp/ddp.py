@@ -1,9 +1,8 @@
 from accelerate import Accelerator
-import os
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import DataLoader, TensorDataset
+from torch.utils.data import DataLoader
 from torch.utils.data.distributed import DistributedSampler
 from torchvision import datasets, transforms
 from torchvision.models import resnet18
@@ -22,8 +21,8 @@ train_dataset = datasets.CIFAR10(root='./ddp/data', train=True, download=True, t
 val_dataset = datasets.CIFAR10(root='./ddp/data', train=False, download=True, transform=transform)
 
 # Use DistributedSampler to partition the dataset among the nodes
-train_sampler = DistributedSampler(train_dataset, num_replicas=accelerator.num_processes, rank=accelerator.process_index)
-val_sampler = DistributedSampler(val_dataset, num_replicas=accelerator.num_processes, rank=accelerator.process_index)
+train_sampler = DistributedSampler(train_dataset, num_replicas=accelerator.num_processes, rank=accelerator.process_index, shuffle=True)
+val_sampler = DistributedSampler(val_dataset, num_replicas=accelerator.num_processes, rank=accelerator.process_index, shuffle=False)
 
 train_loader = DataLoader(train_dataset, batch_size=32, sampler=train_sampler)
 val_loader = DataLoader(val_dataset, batch_size=32, sampler=val_sampler)
@@ -41,13 +40,13 @@ model, optimizer, train_loader, val_loader = accelerator.prepare(model, optimize
 def compute_accuracy(outputs, targets):
     _, predicted = torch.max(outputs, 1)
     correct = (predicted == targets).sum().item()
-    accuracy = correct / targets.size(0)
-    return accuracy
+    return correct
 
 def evaluate_model(model, dataloader, loss_fn, accelerator):
     model.eval()
     total_loss = 0.0
-    total_accuracy = 0.0
+    total_correct = 0
+    total_samples = 0
     device = accelerator.device  # Get the device from the accelerator
 
     with torch.no_grad():
@@ -57,38 +56,55 @@ def evaluate_model(model, dataloader, loss_fn, accelerator):
             outputs = model(inputs)
             loss = loss_fn(outputs, targets)
             total_loss += loss.item() * len(targets)
-            batch_accuracy = compute_accuracy(outputs, targets)
-            total_accuracy += batch_accuracy * len(targets)
+            total_correct += compute_accuracy(outputs, targets)
+            total_samples += len(targets)
 
-    return total_loss / len(dataloader.dataset), total_accuracy / len(dataloader.dataset)
+    # Gather results from all processes
+    total_loss = torch.tensor(total_loss, device=device)
+    total_correct = torch.tensor(total_correct, device=device)
+    total_samples = torch.tensor(total_samples, device=device)
+
+    total_loss = accelerator.gather(total_loss).sum().item()
+    total_correct = accelerator.gather(total_correct).sum().item()
+    total_samples = accelerator.gather(total_samples).sum().item()
+
+    return total_loss / total_samples, total_correct / total_samples
 
 def train(model, train_loader, optimizer, loss_fn, accelerator, num_epochs=10):
-    model, optimizer, train_loader = accelerator.prepare(model, optimizer, train_loader)
     device = accelerator.device  # Get the device from the accelerator
-    print(device)
     
     for epoch in range(num_epochs):
         model.train()
         epoch_loss = 0.0
-        epoch_accuracy = 0.0
+        total_correct = 0
+        total_samples = 0
+
         for batch in train_loader:
-            optimizer.zero_grad()
             inputs, targets = batch
             inputs, targets = inputs.to(device), targets.to(device)  # Move data to the right device
             outputs = model(inputs)
             loss = loss_fn(outputs, targets)
             
+            optimizer.zero_grad()
             accelerator.backward(loss)
             optimizer.step()
 
             # Compute accuracy for this batch
-            batch_accuracy = compute_accuracy(outputs, targets)
-            epoch_accuracy += batch_accuracy * len(targets)
+            total_correct += compute_accuracy(outputs, targets)
             epoch_loss += loss.item() * len(targets)
+            total_samples += len(targets)
 
-        # Compute average loss and accuracy for the epoch
-        epoch_loss /= len(train_loader.dataset)
-        epoch_accuracy /= len(train_loader.dataset)
+        # Gather results from all processes
+        epoch_loss = torch.tensor(epoch_loss, device=device)
+        total_correct = torch.tensor(total_correct, device=device)
+        total_samples = torch.tensor(total_samples, device=device)
+
+        epoch_loss = accelerator.gather(epoch_loss).sum().item()
+        total_correct = accelerator.gather(total_correct).sum().item()
+        total_samples = accelerator.gather(total_samples).sum().item()
+
+        epoch_loss /= total_samples
+        epoch_accuracy = total_correct / total_samples
         
         if accelerator.is_local_main_process:
             print(f"Epoch {epoch + 1}, Loss: {epoch_loss:.4f}, Accuracy: {epoch_accuracy:.4f}")
