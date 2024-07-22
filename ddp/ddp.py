@@ -13,7 +13,7 @@ set_seed(0)
 # Initialize the Accelerator
 accelerator = Accelerator()
 
-BATCH_SIZE = 64 / accelerator.num_processes
+BATCH_SIZE = 64 // accelerator.num_processes
 LEARNING_RATE = 0.001 * accelerator.num_processes
 EPOCHS = 20
 
