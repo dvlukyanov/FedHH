@@ -13,6 +13,10 @@ set_seed(0)
 # Initialize the Accelerator
 accelerator = Accelerator()
 
+BATCH_SIZE = 64 / accelerator.num_processes
+LEARNING_RATE = 0.001 * accelerator.num_processes
+EPOCHS = 20
+
 # Define the transforms for CIFAR-10
 transform = transforms.Compose([
     transforms.ToTensor(),
@@ -27,14 +31,14 @@ val_dataset = datasets.CIFAR10(root='./ddp/data', train=False, download=True, tr
 train_sampler = DistributedSampler(train_dataset, num_replicas=accelerator.num_processes, rank=accelerator.process_index, shuffle=False)
 val_sampler = DistributedSampler(val_dataset, num_replicas=accelerator.num_processes, rank=accelerator.process_index, shuffle=False)
 
-train_loader = DataLoader(train_dataset, batch_size=25, sampler=train_sampler)
-val_loader = DataLoader(val_dataset, batch_size=25, sampler=val_sampler)
+train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, sampler=train_sampler)
+val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, sampler=val_sampler)
 
 # Initialize ResNet-18 model
 model = resnet18(weights=None, num_classes=10)  # CIFAR-10 has 10 classes
 
 # Initialize optimizer and loss function
-optimizer = optim.Adam(model.parameters(), lr=0.001 * accelerator.num_processes)
+optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
 loss_fn = nn.CrossEntropyLoss()
 
 # Prepare everything with accelerator
@@ -118,4 +122,4 @@ def train(model, train_loader, optimizer, loss_fn, accelerator, num_epochs=10):
             print(f"Validation Loss: {val_loss:.4f}, Validation Accuracy: {val_accuracy:.4f}")
 
 # Run training
-train(model, train_loader, optimizer, loss_fn, accelerator)
+train(model, train_loader, optimizer, loss_fn, accelerator, EPOCHS)
