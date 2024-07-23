@@ -22,8 +22,6 @@ def start_server(host='0.0.0.0', port=12345):
         client_socket.close()
 
 
-import socket
-
 def start_worker(host='127.0.0.1', port=12345):
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     
@@ -44,6 +42,7 @@ def main():
     parser.add_argument('--main', type=str, default='')
     parser.add_argument('--port', type=str, default='')
     args = parser.parse_args()
+    print(args)
 
     hostname = socket.gethostname()
     ip = socket.gethostbyname(hostname)
@@ -55,4 +54,5 @@ def main():
 
 
 if __name__ == '__main__':
+    print('start')
     main()
