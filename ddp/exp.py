@@ -3,13 +3,15 @@ import socket
 import time
 
 
-def start_server(host='0.0.0.0', port=12345):
+def start_server(host='0.0.0.0', port=12345, workers=0):
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.bind((host, port))
     server_socket.listen()
     print(f"Server listening on {host}:{port}")
+
+    cnt = 0
     
-    while True:
+    while cnt < workers:
         client_socket, client_address = server_socket.accept()
         print(f"Connection from {client_address} has been established!")
         
@@ -20,6 +22,7 @@ def start_server(host='0.0.0.0', port=12345):
         client_socket.sendall(response.encode('utf-8'))
         
         client_socket.close()
+        cnt += 1
 
 
 def start_worker(host='127.0.0.1', port=12345):
@@ -42,6 +45,7 @@ def main():
     # parser.add_argument('--main', action='store_true')
     parser.add_argument('--server', type=str, default='')
     parser.add_argument('--port', type=str, default='')
+    parser.add_argument('--workers', type=int, default=0)
     args = parser.parse_args()
 
     hostname = socket.gethostname()
@@ -51,7 +55,7 @@ def main():
     print(f'Hostname: {hostname}')
     if args.server == hostname:
         print('Launching server')
-        start_server(args.server, int(args.port))
+        start_server(args.server, int(args.port), args.workers)
     else:
         print('Launching worker')
         time.sleep(5)
