@@ -47,9 +47,13 @@ def main():
     hostname = socket.gethostname()
     # ip = socket.gethostbyname(hostname)
 
+    print(f'Parameter: {args.server}')
+    print(f'Hostname: {hostname}')
     if args.server == hostname:
+        print('Launching server')
         start_server(args.server, int(args.port))
     else:
+        print('Launching worker')
         start_worker(args.server, int(args.port))
 
 
