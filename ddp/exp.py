@@ -1,6 +1,6 @@
 import argparse
 import socket
-import random
+import time
 
 
 def start_server(host='0.0.0.0', port=12345):
@@ -54,6 +54,7 @@ def main():
         start_server(args.server, int(args.port))
     else:
         print('Launching worker')
+        time.sleep(5)
         start_worker(args.server, int(args.port))
 
 
