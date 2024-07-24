@@ -39,20 +39,16 @@ def start_worker(host='127.0.0.1', port=12345):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--main', type=str, default='')
+    parser.add_argument('--main', action='store_true')
+    parser.add_argument('--server', type=str, default='')
     parser.add_argument('--port', type=str, default='')
     args = parser.parse_args()
-    print(args)
 
-    hostname = socket.gethostname()
-    ip = socket.gethostbyname(hostname)
-
-    if ip == args.main:
-        start_server(ip, int(args.port))
+    if args.main:
+        start_server(args.server, int(args.port))
     else:
-        start_worker(args.main, int(args.port))
+        start_worker(args.server, int(args.port))
 
 
 if __name__ == '__main__':
-    print('start')
     main()
