@@ -45,9 +45,9 @@ def main():
     args = parser.parse_args()
 
     hostname = socket.gethostname()
-    ip = socket.gethostbyname(hostname)
+    # ip = socket.gethostbyname(hostname)
 
-    if args.server == ip:
+    if args.server == hostname:
         start_server(args.server, int(args.port))
     else:
         start_worker(args.server, int(args.port))
