@@ -31,7 +31,7 @@ def start_worker(host='127.0.0.1', port=12345):
     client_socket.connect((host, port))
     print(f"Connected to server at {host}:{port}")
     
-    message = "Hello from {host}, server!"
+    message = "Hello from " + host + ", server!"
     client_socket.sendall(message.encode('utf-8'))
     
     response = client_socket.recv(1024)
