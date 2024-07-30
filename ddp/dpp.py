@@ -4,8 +4,11 @@ import torchvision.transforms as transforms
 from torchvision.datasets import CIFAR10
 from torch.utils.data import DataLoader
 import torch.optim as optim
+from accelerate import Accelerator
 
-model = models.resnet18(pretrained=False)
+accelerator = Accelerator()
+
+model = models.resnet18(weights=None)
 
 num_classes = 10
 model.fc = torch.nn.Linear(model.fc.in_features, num_classes)
@@ -24,8 +27,8 @@ val_transforms = transforms.Compose([
     transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
 ])
 
-train_dataset = CIFAR10(root='./data', train=True, download=True, transform=train_transforms)
-val_dataset = CIFAR10(root='./data', train=False, download=True, transform=val_transforms)
+train_dataset = CIFAR10(root='./ddp/data', train=True, download=True, transform=train_transforms)
+val_dataset = CIFAR10(root='./ddp/data', train=False, download=True, transform=val_transforms)
 
 train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True, num_workers=4)
 val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False, num_workers=4)
@@ -33,8 +36,13 @@ val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False, num_workers=4
 criterion = torch.nn.CrossEntropyLoss()
 optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
 
+model, optimizer, training_dataloader, scheduler = accelerator.prepare(
+    model, optimizer, train_loader, None
+)
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
+print(device)
 
 def train_model(model, criterion, optimizer, train_loader, val_loader, num_epochs=25):
     for epoch in range(num_epochs):
@@ -50,9 +58,9 @@ def train_model(model, criterion, optimizer, train_loader, val_loader, num_epoch
             running_loss += loss.item() * inputs.size(0)
         
         epoch_loss = running_loss / len(train_loader.dataset)
-        print(f"Epoch {epoch}/{num_epochs-1}, Loss: {epoch_loss:.4f}")
-        
-        validate_model(model, val_loader)
+
+        accuracy = validate_model(model, val_loader)
+        print(f"Epoch {epoch}/{num_epochs-1}, Loss: {epoch_loss:.4f}, Validation Accuracy: {accuracy:.2f}%")
         
     return model
 
@@ -67,7 +75,7 @@ def validate_model(model, val_loader):
             _, preds = torch.max(outputs, 1)
             correct += (preds == labels).sum().item()
             total += labels.size(0)
-    print(f"Validation Accuracy: {100 * correct / total:.2f}%")
+    return 100 * correct / total
 
 trained_model = train_model(model, criterion, optimizer, train_loader, val_loader, num_epochs=25)
 

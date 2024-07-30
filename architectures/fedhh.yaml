@@ -1,0 +1,28 @@
+server:
+    rounds: 20
+
+edge:
+    qnt: 3
+    training:
+        iterations: 3
+    models:
+      - resnet18
+      - densenet121
+      - googlenet
+
+client:
+    qnt: 33
+    training:
+        epochs: 3
+        batch_size: 64
+
+worker:
+    delay: 5
+
+storage:
+    models: /storage/fedhh/models
+
+seed: 0
+
+notification:
+  enable: True

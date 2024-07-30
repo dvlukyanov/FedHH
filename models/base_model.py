@@ -1,4 +1,5 @@
 import torch
+import torch.nn as nn
 import torch.optim as optim
 
 
@@ -13,6 +14,9 @@ class BaseModel:
 
     def get_model(self):
         raise NotImplementedError
+    
+    def get_criterion(self):
+        return nn.CrossEntropyLoss()
 
     def get_tuning_optimizer(self, model):
         if self.trial:

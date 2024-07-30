@@ -13,5 +13,6 @@
 
 CONDA_BIN=$(whereis -b conda | awk '{print $2}' | head -n 1)
 SERVER=$(hostname -s)
+NOTIFIER_SLACK=[SLACK_WEBHOOK_URL_PLACEHOLDER]
 
-srun --unbuffered --ntasks=4 --output=ddp-output_%j_%N_%t.txt --error=ddp-error_%j_%N_%t.txt ${CONDA_BIN} run -n thesis /usr/bin/python3 /home/dlukyan/fedhh/code/ddp/exp.py --server=${SERVER} --port=12345
+srun --unbuffered --ntasks=4 --output=ddp-output_%j_%N_%t.txt --error=ddp-error_%j_%N_%t.txt ${CONDA_BIN} run -n thesis /usr/bin/python3 /home/dlukyan/fedhh/code/ddp/exp.py --server=${SERVER} --port=12345 --slack=${NOTIFIER_SLACK}
