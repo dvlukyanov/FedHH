@@ -58,7 +58,7 @@ class ProxyPool():
             raise RuntimeError('The proxy pool is full: ' + len(self.proxies))
         id = max([proxy.id for proxy in self.proxies]) + 1 if len(self.proxies) > 0 else 0
         proxy = Proxy(id=id, hostname=hostname, connection=connection)
-        self.proxies.append(proxy)
+        self.proxies.add(proxy)
         print(f'Proxy {proxy} + is created and added to the pool')
 
     @synchronized
