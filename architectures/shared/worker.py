@@ -120,6 +120,8 @@ class Worker():
             _, predicted = torch.max(outputs.data, 1)
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
+            all_labels.extend(labels.cpu().numpy())
+            all_predictions.extend(predicted.cpu().numpy())
         if scheduler:
             scheduler.step()
         loss = running_loss / len(data_loader)
