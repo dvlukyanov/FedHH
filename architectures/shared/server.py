@@ -4,6 +4,11 @@ import torch
 from torch.utils.data import DataLoader, Subset
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_score, recall_score, f1_score, confusion_matrix
+
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+
 from architectures.shared.edge import EdgePool
 from architectures.shared.proxy import ProxyPool
 from data.dataset import CustomImageDataset

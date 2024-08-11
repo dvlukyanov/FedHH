@@ -3,6 +3,11 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import StratifiedKFold
 import torch
+
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+
 from architectures.shared.config import Config
 from models.model_factory import ModelFactory
 

@@ -1,5 +1,10 @@
 import concurrent.futures
 import torch
+
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+
 from architectures.shared.config import Config
 from architectures.shared.client import ClientPool
 from models.model_factory import ModelFactory

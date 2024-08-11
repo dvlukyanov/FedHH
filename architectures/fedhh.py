@@ -1,5 +1,10 @@
 import argparse
 import socket
+
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from architectures.shared.server import Server
 from architectures.shared.config import Config
 from architectures.shared.worker import Worker
