@@ -89,7 +89,7 @@ class ProxyPool():
         id = max([proxy.id for proxy in self.proxies]) + 1 if len(self.proxies) > 0 else 0
         proxy = Proxy(id=id, hostname=hostname, connection=connection)
         self.proxies.add(proxy)
-        print(f'Proxy {proxy} + is created and added to the pool')
+        print(f'Proxy {proxy.hostname} + is created and added to the pool')
 
     @synchronized
     def acquire(self):
