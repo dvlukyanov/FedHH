@@ -48,10 +48,10 @@ class Server():
         return server_socket
 
     def _setup_workers(self, server_socket):
-        while len(ProxyPool().workers) < ProxyPool().limit:
+        while len(ProxyPool().proxies) < ProxyPool().limit:
             conn, addr = server_socket.accept()
             ProxyPool().create(hostname=addr, connection=conn)
-        print(f'All workers are connected: {len(ProxyPool().workers)}')
+        print(f'All workers are connected: {len(ProxyPool().proxies)}')
 
     def _setup_architecture(self):
         data = split_data(int(Config()['edge']['qnt']))

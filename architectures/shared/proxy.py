@@ -1,11 +1,11 @@
 import json
 from dataclasses import asdict
-from synchronized import synchronized
 
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
+from architectures.shared.synchronized import synchronized
 from architectures.shared.protocol import Command, CommandResponse, CommandResult
 
 

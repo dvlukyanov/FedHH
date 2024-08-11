@@ -23,8 +23,8 @@ def main():
     parser.add_argument('--slack', type=str, default=None)
     args = parser.parse_args()
 
-    config = Config('fedhh.yaml')
-    if config['notification']['enabled'] and args.slack:
+    config = Config(os.path.abspath(os.path.join(os.path.dirname(__file__), 'fedhh.yaml')))
+    if config['notification']['enable'] and args.slack:
         config['notification']['slack'] = args.slack
 
     hostname = socket.gethostname()
