@@ -1,4 +1,7 @@
+import json
+from dataclasses import asdict
 from synchronized import synchronized
+from architectures.shared.protocol import Command, CommandResponse, CommandResult
 
 
 __author__ = 'Dmitry Lukyanov'
@@ -23,6 +26,28 @@ class Proxy():
         if self.available:
             raise RuntimeError('Proxy ' + self + ' is not acquired')
         self.available = True
+
+    def execute(self, command: Command):
+        data = json.dumps(asdict(command)).encode('utf-8')
+        self.connection.sendall(data)
+        print(f'Command is sent to the worker: {command}')
+        while True:
+            response: CommandResponse = self._receive_response()
+            if response is None:
+                continue
+            match response.result:
+                case CommandResult.DONE:
+                    return response
+                case _:
+                    raise RuntimeError(f'Unknown result: {command}')
+                
+    def _receive_response(self):
+        data = self.connection.recv(1024)
+        if not data:
+            return None
+        response: CommandResponse = CommandResponse(**json.loads(data.decode('utf-8')))
+        print(f'Response is received: {response}')
+        return response
 
     def __members(self):
         return (self.id)

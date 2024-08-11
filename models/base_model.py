@@ -18,7 +18,7 @@ class BaseModel:
     def get_criterion(self):
         return nn.CrossEntropyLoss()
 
-    def get_tuning_optimizer(self, model):
+    def get_optimizer(self, model):
         if self.trial:
             learning_rate = self.trial.suggest_float('learning_rate', 1e-5, 1e-2, log=True)
             beta1 = self.trial.suggest_float('beta1', 0.8, 0.99)
@@ -39,7 +39,7 @@ class BaseModel:
             weight_decay=weight_decay
         )
     
-    def get_tuning_scheduler(self, optimizer):
+    def get_scheduler(self, optimizer):
         if self.trial:
             scheduler_type = self.trial.suggest_categorical('scheduler_type', ['StepLR', 'ExponentialLR', 'CosineAnnealingLR'])
             if scheduler_type == 'StepLR':

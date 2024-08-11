@@ -38,7 +38,7 @@ def objective(trial, model_name, img_dir, labels_file):
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=DATA_LOADER_WORKERS*torch.cuda.device_count(), prefetch_factor=DATA_LOADER_WORKERS*4, pin_memory=True)
     valid_loader = DataLoader(valid_dataset, batch_size=batch_size, shuffle=False, num_workers=DATA_LOADER_WORKERS*torch.cuda.device_count(), prefetch_factor=DATA_LOADER_WORKERS*4, pin_memory=True)
 
-    model_instance = ModelFactory.create_model(model_name, trial)
+    model_instance = ModelFactory.create(model_name, trial)
 
     model = model_instance.get_model()
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

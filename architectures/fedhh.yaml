@@ -1,28 +1,44 @@
 server:
     rounds: 20
+    models:
+        name: server_{round}_{edge_id}.pt
+    knowledge_transfer:
+        test_ratio: 0.5
+        batch_size: 64
+        epochs: 10
+        temperature: 0.8
 
 edge:
     qnt: 3
     training:
         iterations: 3
     models:
-      - resnet18
-      - densenet121
-      - googlenet
+        name: edge_{round}_{iteration}_{edge_id}.pt
+        list:
+            - resnet18
+            - densenet121
+            - googlenet
 
 client:
     qnt: 33
+    models:
+        name: client_{round}_{iteration}_{epoch}_{edge_id}_{client_id}.pt
     training:
         epochs: 3
         batch_size: 64
 
 worker:
     delay: 5
+    cpu_workers: 8
 
 storage:
     models: /storage/fedhh/models
+    data:
+        folder: /storage/fedhh/data
+        labels: /storage/fedhh/labels.csv
 
 seed: 0
 
 notification:
   enable: True
+  slack: [url]

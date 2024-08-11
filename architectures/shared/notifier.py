@@ -1,11 +1,17 @@
 import requests
+from architectures.shared.config import Config
 
-def notify_slack(url, message):
+__author__ = 'Dmitry Lukyanov'
+__email__ = 'dmitry@dmitrylukyanov.com'
+__license__ = 'MIT'
+
+
+def notify_slack(message):
     headers = {
         'Content-Type': "application/json",
     }
     response = requests.post(
-        url=url,
+        url=Config()['notification']['slack'],
         json={"text": message},
         headers=headers
     )

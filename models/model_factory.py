@@ -18,7 +18,7 @@ __license__ = 'MIT'
 class ModelFactory:
     
     @staticmethod
-    def create_model(model_name, trial=None):
+    def create(model_name, trial=None):
         if model_name == 'cnn':
             return CustomCNNModel(trial)
         elif model_name == 'densenet121':

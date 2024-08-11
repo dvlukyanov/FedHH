@@ -1,6 +1,11 @@
 import yaml
 
 
+__author__ = 'Dmitry Lukyanov'
+__email__ = 'dmitry@dmitrylukyanov.com'
+__license__ = 'MIT'
+
+
 class Config:
     
     _instance = None

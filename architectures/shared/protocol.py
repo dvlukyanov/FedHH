@@ -1,5 +1,6 @@
 from enum import Enum
 from typing import List
+import numpy as np
 from dataclasses import dataclass
 
 
@@ -12,7 +13,7 @@ class CommandAction(Enum):
     TRAIN = 1
     STOP = 2
 
-
+@dataclass
 class Command():
     action: CommandAction
     model_type: str
@@ -22,6 +23,7 @@ class Command():
     epochs: int
     batch_size: int
     items: List[int]
+    test_ratio: float
     seed: int
 
 
@@ -32,5 +34,16 @@ class CommandResult(Enum):
 
 
 @dataclass
+class Metric():
+    loss: float
+    accuracy: float
+    precision: float
+    recall: float
+    f1: float
+    cmatrix: np.ndarray
+
+@dataclass
 class CommandResponse():
     result: CommandResult
+    train_history: any
+    test_history: any
