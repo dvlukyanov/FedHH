@@ -21,9 +21,13 @@ def main():
     parser.add_argument('--port', type=str, default='')
     parser.add_argument('--workers', type=int, default=0)
     parser.add_argument('--slack', type=str, default=None)
+    parser.add_argument('--data', type=str, default=None)
     args = parser.parse_args()
 
     config = Config(os.path.abspath(os.path.join(os.path.dirname(__file__), 'fedhh.yaml')))
+    if args.data:
+        config['storage']['data']['folder'] = args.data + '/images'
+        config['storage']['data']['labels'] = args.data + '/labels.csv'
     if config['notification']['enable'] and args.slack:
         config['notification']['slack'] = args.slack
 
