@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --job-name=ddp
-#SBATCH --output=ddp-output_%j_%N.txt
-#SBATCH --error=ddp-error_%j_%N.txt
+#SBATCH --job-name=fedhh
+#SBATCH --output=fedhh-output_%j_%N.txt
+#SBATCH --error=fedhh-error_%j_%N.txt
 #SBATCH --ntasks=4  # number of tasks
 #SBATCH --nodes=4 # number of nodes
 #SBATCH --ntasks-per-node=1 # tasks per node
