@@ -1,5 +1,6 @@
 import socket
 import concurrent.futures
+import pandas as pd
 import torch
 from torch.utils.data import DataLoader, Subset
 from sklearn.model_selection import train_test_split
@@ -54,7 +55,7 @@ class Server():
         print(f'All workers are connected: {len(ProxyPool().proxies)}')
 
     def _setup_architecture(self):
-        data = split_data(int(Config()['edge']['qnt']))
+        data = split_data(pd.read_csv(Config()['storage']['data']['labels']), int(Config()['edge']['qnt']))
         for id in range(int(Config()['edge']['qnt'])):
             model_type = Config()['edge']['models']['list'][id % len(Config()['edge']['models']['list'])]
             self.edge_pool.create(model_type, data[id])

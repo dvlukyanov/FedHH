@@ -9,7 +9,7 @@ from architectures.shared.config import Config
 from architectures.shared.client import ClientPool
 from models.model_factory import ModelFactory
 from architectures.shared.notifier import notify_slack
-from architectures.shared.utils import load_model, save_model
+from architectures.shared.utils import load_model, save_model, split_data
 
 
 __author__ = 'Dmitry Lukyanov'
@@ -37,8 +37,8 @@ class Edge():
         return Config()['edge']['models']['name'].format(round=round, iteration=iteration, edge_id=self.id)
     
     def _setup_architecture(self):
-        data = None # TODO
-        for id in range(Config()['client']['qnt']):
+        data = split_data(data, int(Config()['client']['qnt']))
+        for id in range(int(Config()['client']['qnt'])):
             self.client_pool.create(self.model_type, data[id])
 
     def train(self):
