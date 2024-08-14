@@ -32,7 +32,7 @@ worker:
     cpu_workers: 8
 
 storage:
-    models: /storage/fedhh/models
+    models: /home/dlukyan/fedhh/models
     data:
         folder: /storage/fedhh/data
         labels: /storage/fedhh/labels.csv
