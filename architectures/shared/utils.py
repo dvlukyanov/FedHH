@@ -13,16 +13,16 @@ from models.model_factory import ModelFactory
 
 def split_data(folds):
     df = pd.read_csv(Config()['storage']['data']['labels'])
-    split_indices = {i: {cls: [] for cls in df['class'].unique()} for i in range(folds)}
+    split_indices = {i: {cls: [] for cls in df['label'].unique()} for i in range(folds)}
     skf = StratifiedKFold(n_splits=folds, shuffle=True, random_state=Config()['seed'])
-    for i, (_, test_index) in enumerate(skf.split(df['filename'], df['class'])):
-        for cls in df['class'].unique():
-            class_indices = df[df['class'] == cls].index
-            split_indices[i][cls] = np.intersect1d(class_indices, test_index).tolist()
+    for i, (_, test_index) in enumerate(skf.split(df['filename'], df['label'])):
+        for cls in df['label'].unique():
+            label_indices = df[df['label'] == cls].index
+            split_indices[i][cls] = np.intersect1d(label_indices, test_index).tolist()
     fold_indices = {i: [] for i in range(folds)}
     for i in range(folds):
         all_indices = []
-        for cls in df['class'].unique():
+        for cls in df['label'].unique():
             all_indices.extend(split_indices[i][cls])
         fold_indices[i] = list(set(all_indices))
     print(f"Data is split into {len(fold_indices)} partitions: " + ", ".join([f"{len(fold_indices[i])}" for i in range(len(fold_indices))]))
