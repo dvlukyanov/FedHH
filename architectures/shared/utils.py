@@ -32,8 +32,8 @@ def split_data(folds):
 def load_model(model_type, folder, model_name):
     model_path = os.path.join(folder, model_name)
     model = ModelFactory.create(model_type)
-    model.load_state_dict(torch.load(model_path))
-    model.eval()
+    model.get_model().load_state_dict(torch.load(model_path))
+    model.get_model().eval()
     print(f"Model {model_name} ({model_type}) is loaded")
     return model
 

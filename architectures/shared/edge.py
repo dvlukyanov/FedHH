@@ -30,7 +30,7 @@ class Edge():
     def _init_model(self):
         model = ModelFactory.create(self.model_type)
         model_name = self._create_model_name(round, 'initialized')
-        save_model(model, self.model_type, Config()['storage']['models'], model_name)
+        save_model(model.get_model(), self.model_type, Config()['storage']['models'], model_name)
         return model_name
 
     def _create_model_name(self, round, iteration):
@@ -49,8 +49,8 @@ class Edge():
                     future.result()
             model = self._aggregate()
             self._evaluate(model)
-            if self.config['notification']['enabled']:
-                notify_slack(self.config['notification']['slack'], f'Epoch {epoch} completed. Training accuracy: {accuracy}. Validation accuracy: {accuracy}')
+            if Config()['notification']['enabled']:
+                notify_slack(Config()['notification']['slack'], f'Epoch {epoch} completed. Training accuracy: {accuracy}. Validation accuracy: {accuracy}')
             self._distribute()
 
     def _aggregate(self):
