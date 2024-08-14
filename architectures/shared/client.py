@@ -55,4 +55,4 @@ class ClientPool():
         id = max([client.id for client in self.clients]) + 1 if len(self.clients) > 0 else 0
         client = Client(id, model_type, data)
         self.clients.add(client)
-        print(f'Client {client} added to the pool')
+        print(f'Client {client.id} added to the pool')
