@@ -37,7 +37,7 @@ class Edge():
         return Config()['edge']['models']['name'].format(round=round, iteration=iteration, edge_id=self.id)
     
     def _setup_architecture(self):
-        data = split_data(data, int(Config()['client']['qnt']))
+        data = split_data(self.data, int(Config()['client']['qnt']))
         for id in range(int(Config()['client']['qnt'])):
             self.client_pool.create(self.model_type, data[id])
 
