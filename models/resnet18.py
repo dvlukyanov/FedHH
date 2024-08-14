@@ -9,7 +9,7 @@ __license__ = 'MIT'
 
 class ResNet18Model(BaseModel):
 
-    def get_model(self):
+    def _get_model(self):
         return resnet18(weights=None, num_classes=10)
     
     def get_tuning_optimizer(self, model):

@@ -9,7 +9,7 @@ __license__ = 'MIT'
 
 class GoogLeNetModel(BaseModel):
 
-    def get_model(self):
+    def _get_model(self):
         return googlenet(weights=None, num_classes=10)
     
     def get_tuning_optimizer(self, model):

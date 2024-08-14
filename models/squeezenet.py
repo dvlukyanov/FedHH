@@ -10,7 +10,7 @@ __license__ = 'MIT'
 
 class SqueezeNetModel(BaseModel):
 
-    def get_model(self):
+    def _get_model(self):
         model = torch.hub.load('pytorch/vision:v0.10.0', 'squeezenet1_1', pretrained=True)
         model.eval()
         return model

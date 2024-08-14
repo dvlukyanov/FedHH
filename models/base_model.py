@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -11,9 +12,16 @@ __license__ = 'MIT'
 class BaseModel:
     def __init__(self, trial=None):
         self.trial = trial
+        self.model = None
 
     def get_model(self):
-        raise NotImplementedError
+        if not self.model:
+            self.model = self._get_model()
+        return self.model
+
+    @abstractmethod
+    def _get_model(self):
+        pass
     
     def get_criterion(self):
         return nn.CrossEntropyLoss()

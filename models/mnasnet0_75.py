@@ -9,7 +9,7 @@ __license__ = 'MIT'
 
 class MNASNet0_75Model(BaseModel):
 
-    def get_model(self):
+    def _get_model(self):
         return mnasnet0_75(weights=None, num_classes=10)
     
     def get_tuning_optimizer(self, model):

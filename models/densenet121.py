@@ -9,7 +9,7 @@ __license__ = 'MIT'
 
 class DenseNet121Model(BaseModel):
 
-    def get_model(self):
+    def _get_model(self):
         return densenet121(weights=None, num_classes=10)
     
     def get_tuning_optimizer(self, model):

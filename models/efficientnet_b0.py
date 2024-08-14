@@ -9,7 +9,7 @@ __license__ = 'MIT'
 
 class EfficientNet_B0Model(BaseModel):
 
-    def get_model(self):
+    def _get_model(self):
         return efficientnet_b0(weights=None, num_classes=10)
     
     def get_tuning_optimizer(self, model):

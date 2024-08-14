@@ -9,7 +9,7 @@ __license__ = 'MIT'
 
 class ShuffleNetV2x1_5Model(BaseModel):
 
-    def get_model(self):
+    def _get_model(self):
         return shufflenet_v2_x1_5(weights=None, num_classes=10)
     
     def get_tuning_optimizer(self, model):
