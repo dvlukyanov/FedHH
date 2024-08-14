@@ -11,20 +11,13 @@ from architectures.shared.config import Config
 from models.model_factory import ModelFactory
 
 def split_data(df, folds):
-    split_indices = {i: {cls: [] for cls in df['label'].unique()} for i in range(folds)}
-    skf = StratifiedKFold(n_splits=folds, shuffle=True, random_state=42)
-    for i, (_, test_index) in enumerate(skf.split(df['filename'], df['label'])):
-        for cls in df['label'].unique():
-            label_indices = df[df['label'] == cls].index
-            split_indices[i][cls] = np.intersect1d(label_indices, test_index).tolist()
+    skf = StratifiedKFold(n_splits=folds, shuffle=True, random_state=0)
     fold_indices = {i: [] for i in range(folds)}
-    for i in range(folds):
-        all_indices = []
-        for cls in df['label'].unique():
-            all_indices.extend(split_indices[i][cls])
-        fold_indices[i] = list(set(all_indices))
-    print(f"Data is split into {len(fold_indices)} partitions: " + ", ".join([f"{len(fold_indices[i])}" for i in range(len(fold_indices))]))
-    return fold_indices
+    for i, (_, test_index) in enumerate(skf.split(df['filename'], df['label'])):
+        fold_indices[i] = test_index
+    fold_dfs = {i: df.iloc[fold_indices[i]].reset_index(drop=True) for i in range(folds)}
+    print(f"Data is split into {len(fold_dfs)} partitions: " + ", ".join([f"{len(fold_dfs[i])}" for i in range(len(fold_dfs))]))
+    return fold_dfs
 
 
 def load_model(model_type, folder, model_name):
