@@ -23,13 +23,14 @@ class Edge():
         self.id = id
         self.model_type = model_type
         self.data = data
+        self.iteration = 1
         self.model_name = self._init_model()
         self.client_pool = ClientPool()
         self._setup_architecture()
 
     def _init_model(self):
         model = ModelFactory.create(self.model_type)
-        model_name = self._create_model_name(round, 'initialized')
+        model_name = self._create_model_name('initialized', 'initialized')
         save_model(model.get_model(), self.model_type, Config()['storage']['models'], model_name)
         return model_name
 
@@ -44,7 +45,7 @@ class Edge():
     def train(self):
         for iteration in range(Config()['edge']['training']['iterations']):
             with concurrent.futures.ThreadPoolExecutor(max_workers=len(self.client_pool.clients)) as executor:
-                futures = [executor.submit(client.train) for client in self.client_pool.clients]
+                futures = [executor.submit(client.train, self.model_name, self._create_model_name(1, self.iteration)) for client in self.client_pool.clients]
                 for future in concurrent.futures.as_completed(futures):
                     future.result()
             # model = self._aggregate()
