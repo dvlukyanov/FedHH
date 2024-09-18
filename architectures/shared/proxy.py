@@ -67,7 +67,9 @@ class Proxy():
         Logger.proxy(f'command_dict: {command_dict}')
         serializable_dict = {k: convert(v) for k, v in command_dict.items()}
         Logger.proxy(f'serializable_dict: {serializable_dict}')
-        return json.dumps(serializable_dict)
+        js = json.dumps(serializable_dict)
+        Logger.proxy(f'json: {js}')
+        return js
                 
     def _receive_response(self):
         data = self.connection.recv(1024)
