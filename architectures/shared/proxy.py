@@ -39,8 +39,8 @@ class Proxy():
     def execute(self, command: Command):
         Logger.proxy(f'Command will be sent to the worker: {command}')
         data = json.dumps(asdict(command)).encode('utf-8')
+        Logger.proxy(data)
         self.connection.sendall(data)
-        print(f'Command is sent to the worker: {command}')
         Logger.proxy(f'Command is sent to the worker: {command}')
         while True:
             response: CommandResponse = self._receive_response()
