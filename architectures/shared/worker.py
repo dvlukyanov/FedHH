@@ -55,7 +55,10 @@ class Worker():
     def _work(self):
         try:
             while True:
-                command: Command = self._receive_command()
+                data = self._receive_command()
+                Logger.worker(data)
+                command: Command = data
+                # command: Command = self._receive_command()
                 if command is None:
                     continue
                 match command.action:
