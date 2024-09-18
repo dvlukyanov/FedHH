@@ -12,9 +12,6 @@ __license__ = 'MIT'
 
 class Logger():
 
-    def __init__(self):
-        self.folder = Config()['log']['folder']
-
     @classmethod
     def server(self, msg):
         self.__log('server.log', msg)
@@ -35,7 +32,8 @@ class Logger():
     def worker(self, msg):
         self.__log('worker.log', msg)
 
+    @classmethod
     def __log(self, file, msg):
-        with open(self.folder + '/' + file, 'a') as f: 
+        with open(Config()['log']['folder'] + '/' + file, 'a') as f: 
             f.write(msg + '\n')
         print(msg)
