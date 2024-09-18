@@ -8,6 +8,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')
 from architectures.shared.config import Config
 from architectures.shared.proxy import ProxyPool, Proxy
 from architectures.shared.protocol import Command, CommandAction, CommandResponse
+from architectures.shared.logger import Logger
 
 
 __author__ = 'Dmitry Lukyanov'
@@ -21,16 +22,17 @@ class Client():
         self.id = id
         self.model_type = model_type
         self.data = data
-        with open('/home/dlukyan/fedhh/models/client.log', 'a') as f: f.write(f'Client {self.id} is initialized')
+        Logger.client(f'Client {self.id} is initialized')
 
     def train(self, model_src, model_target):
+        Logger.client(f'Client {self.id} entered the training function')
         proxy: Optional[Proxy] = None
         while not proxy:
             proxy = ProxyPool().acquire()
             if not proxy:
                 time.sleep(1)
         print(f'Proxy {proxy} is acquired by {self}')
-        with open('/home/dlukyan/fedhh/models/client.log', 'a') as f: f.write(f'Proxy {proxy} is acquired by {self}')
+        Logger.client(f'Proxy {proxy} is acquired by {self}')
         command = Command(
             action=CommandAction.TRAIN,
             model_type=self.model_type,
@@ -43,9 +45,9 @@ class Client():
             test_ratio=0.2,
             seed=Config()['seed']
         )
-        with open('/home/dlukyan/fedhh/models/client.log', 'a') as f: f.write(f'Command is formed at client {self.id}')
+        Logger.client(f'Command is formed at client {self.id}')
         response: CommandResponse = proxy.execute(command)
-        with open('/home/dlukyan/fedhh/models/client.log', 'a') as f: f.write(f'Command {command} is send to proxy at client {self.id}')
+        Logger.client(f'Command {command} is send to proxy at client {self.id}')
         ProxyPool().release(proxy)
         return response
 

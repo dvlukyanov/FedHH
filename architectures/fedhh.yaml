@@ -39,6 +39,9 @@ storage:
 
 seed: 0
 
+log:
+    folder: /home/dlukyan/fedhh/log
+
 notification:
   enable: True
   slack: [url]
