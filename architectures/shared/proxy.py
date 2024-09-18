@@ -40,9 +40,10 @@ class Proxy():
         Logger.proxy(f'Proxy {self.hostname} is released')
 
     def execute(self, command: Command):
-        Logger.proxy(f'Command will be sent to the worker: {command}')
+        # Logger.proxy(f'Command will be sent to the worker: {command}')
         try:
             data = self._serialize(command)
+            Logger.proxy(data)
         except Exception as e:
             Logger.proxy(e)
         Logger.proxy(data)
@@ -59,7 +60,6 @@ class Proxy():
                     raise RuntimeError(f'Unknown result: {command}')
                 
     def _serialize(self, command: Any) -> str:
-        Logger.proxy(f'command: {command}')
         def convert(value):
             if isinstance(value, pd.DataFrame):
                 return value.to_dict(orient='records')
@@ -67,12 +67,8 @@ class Proxy():
                 return value.name
             return value
         command_dict = asdict(command)
-        Logger.proxy(f'command_dict: {command_dict}')
         serializable_dict = {k: convert(v) for k, v in command_dict.items()}
-        Logger.proxy(f'serializable_dict: {serializable_dict}')
-        js = json.dumps(serializable_dict)
-        Logger.proxy(f'json: {js}')
-        return js
+        return json.dumps(serializable_dict)
                 
     def _receive_response(self):
         data = self.connection.recv(1024)
