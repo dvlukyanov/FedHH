@@ -28,7 +28,7 @@ client:
         batch_size: 64
 
 worker:
-    delay: 5
+    delay: 10
     cpu_workers: 8
 
 storage:
