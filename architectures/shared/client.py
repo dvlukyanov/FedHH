@@ -31,19 +31,31 @@ class Client():
             if not proxy:
                 time.sleep(1)
         Logger.client(f'Proxy {proxy.hostname} is acquired by client {self.id}')
-        command = Command(
-            action=CommandAction.TRAIN,
-            model_type=self.model_type,
-            folder=Config()['storage']['models'],
-            model_src=model_src,
-            model_target=model_target,
-            epoch=Config()['client']['training']['epochs'],
-            batch_size=Config()['client']['training']['batch_size'],
-            items=self.data,
-            test_ratio=0.2,
-            seed=Config()['seed']
-        )
-        Logger.client(f'Command is formed at client {self.id}')
+        Logger.client(f'model_type: {self.model_type}')
+        Logger.client(f'folder: {Config()["storage"]["models"]}')
+        Logger.client(f'model_src: {model_src}')
+        Logger.client(f'model_target: {model_target}')
+        Logger.client(f'epochs: {Config()["client"]["training"]["epochs"]}')
+        Logger.client(f'batch_size: {Config()["client"]["training"]["batch_size"]}')
+        Logger.client(f'items: {self.data}')
+        Logger.client(f'test_ratio: {0.2}')
+        Logger.client(f'seed: {Config()["seed"]}')
+        try:
+            command = Command(
+        action=CommandAction.TRAIN,
+        model_type=self.model_type,
+        folder=Config()['storage']['models'],
+        model_src=model_src,
+        model_target=model_target,
+        epochs=Config()['client']['training']['epochs'],
+        batch_size=Config()['client']['training']['batch_size'],
+        items=self.data,
+        test_ratio=0.2,
+        seed=Config()['seed']
+            )
+        except Exception as e:
+            Logger.client(f'Error while creating command: {e}')
+        Logger.client(f'Command {command} is formed at client {self.id}')
         response: CommandResponse = proxy.execute(command)
         Logger.client(f'Command {command} is send to proxy at client {self.id}')
         ProxyPool().release(proxy)
