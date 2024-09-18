@@ -17,6 +17,7 @@ from architectures.shared.config import Config
 from architectures.shared.protocol import CommandAction, Command, CommandResult, Metric, CommandResponse
 from models.model_factory import ModelFactory
 from data.dataset import CustomImageDataset
+from architectures.shared.logger import Logger
 from architectures.shared.utils import load_model, save_model
 from architectures.shared.notifier import notify_slack
 
@@ -34,6 +35,7 @@ class Worker():
         self.port = port
         self.socket = None
         self.device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
+        Logger.worker(f'Worker {self.address} is initialized')
 
     def start(self):
         self._delay(int(Config()['worker']['delay']))
@@ -42,13 +44,13 @@ class Worker():
 
     def _delay(self, delay):
         for second in range(delay, 0, -1):
-            print(f'Delaying start for {second} seconds...')
+            Logger.worker(f'Delaying start for {second} seconds...')
             time.sleep(1)
 
     def _connect(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.connect((self.host, self.port))
-        print(f"Connected to server at {self.host}:{self.port}")
+        Logger.worker(f"Connected to server at {self.host}:{self.port}")
     
     def _work(self):
         try:
@@ -66,17 +68,17 @@ class Worker():
                     case _:
                         raise RuntimeError(f'Unknown command: {command}')
         except Exception as e:
-            print(f"Error in the work loop: {e}")
+            Logger.worker(f"Error in the work loop: {e}")
         finally:
             self.socket.close()
-            print(f'Worker stopped')
+            Logger.worker(f'Worker stopped')
 
     def _receive_command(self):
         data = self.socket.recv(1024)
         if not data:
             return None
         command: Command = Command(**json.loads(data.decode('utf-8')))
-        print(f'Command is received: {command}')
+        Logger.worker(f'Command is received: {command}')
         return command
 
     def _train(self, command: Command):
@@ -188,4 +190,4 @@ class Worker():
         response = CommandResponse(result=result, train_history=train_history, test_history=test_history)
         data = json.dumps(asdict(response)).encode('utf-8')
         self.socket.sendall(data)
-        print(f'Response is sent to the server: {response}')
+        Logger.worker(f'Response is sent to the server: {response}')
