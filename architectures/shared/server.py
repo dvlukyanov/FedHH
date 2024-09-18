@@ -38,9 +38,7 @@ class Server():
     def serve(self):
         server_socket = self._listen()
         self._setup_workers(server_socket)
-        Logger.server('Workers are set')
         self._setup_architecture()
-        Logger.server('Architecture is set')
         self._train()
         # self._notify()
 
@@ -48,31 +46,31 @@ class Server():
         server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server_socket.bind((self.host, self.port))
         server_socket.listen()
-        print(f"Server is listening on {self.host}:{self.port}")
+        Logger.server(f"Server is listening on {self.host}:{self.port}")
         return server_socket
 
     def _setup_workers(self, server_socket):
         while len(ProxyPool().proxies) < ProxyPool().limit:
             conn, addr = server_socket.accept()
             ProxyPool().create(hostname=addr, connection=conn)
-        print(f'All workers are connected: {len(ProxyPool().proxies)}')
+        Logger.server(f'All workers are connected: {len(ProxyPool().proxies)}')
 
     def _setup_architecture(self):
         data = split_data(pd.read_csv(Config()['storage']['data']['labels']), int(Config()['edge']['qnt']))
         for id in range(int(Config()['edge']['qnt'])):
             model_type = Config()['edge']['models']['list'][id % len(Config()['edge']['models']['list'])]
             self.edge_pool.create(model_type, data[id])
+        Logger.server('Architecture is set')
 
     def _train(self):
         for round in range(Config()['server']['rounds']):
             results = []
             with concurrent.futures.ThreadPoolExecutor(max_workers=len(self.edge_pool.edges)) as executor:
                 futures = [executor.submit(edge.train) for edge in self.edge_pool.edges]
-                Logger.server('Futures are submitted')
                 for future in concurrent.futures.as_completed(futures):
                     results.append(future.result())
                 for result in results:
-                    print(result)
+                    Logger.server(result)
             # self._extract()
             # self._evaluate()
             # if self.config['notification']['enabled']:

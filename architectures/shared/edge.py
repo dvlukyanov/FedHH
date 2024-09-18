@@ -34,6 +34,7 @@ class Edge():
         model = ModelFactory.create(self.model_type)
         model_name = self._create_model_name('initialized', 'initialized')
         save_model(model.get_model(), self.model_type, Config()['storage']['models'], model_name)
+        Logger.edge(f'Model {model_name} for edge {self.id} is initialized')
         return model_name
 
     def _create_model_name(self, round, iteration):
@@ -43,12 +44,12 @@ class Edge():
         data = split_data(self.data, int(Config()['client']['qnt']))
         for id in range(int(Config()['client']['qnt'])):
             self.client_pool.create(self.model_type, data[id])
+        Logger.edge(f'Architecture for edge {self.id} is set')
 
     def train(self):
         for iteration in range(Config()['edge']['training']['iterations']):
             with concurrent.futures.ThreadPoolExecutor(max_workers=len(self.client_pool.clients)) as executor:
                 futures = [executor.submit(client.train, self.model_name, self._create_model_name(1, self.iteration)) for client in self.client_pool.clients]
-                Logger.edge(f'Futures are submitted at edge {self.id}')
                 for future in concurrent.futures.as_completed(futures):
                     future.result()
             # model = self._aggregate()

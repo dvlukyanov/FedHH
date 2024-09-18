@@ -22,19 +22,19 @@ class Proxy():
         self.hostname = hostname
         self.connection = connection
         self.available = True
-        Logger.proxy(f'Proxy {self.id} is initialized')
+        Logger.proxy(f'Proxy {self.hostname} is initialized')
 
     def acquire(self):
         if not self.available:
             raise RuntimeError('Proxy ' + self + ' is not available')
         self.available = False
-        Logger.proxy(f'Proxy {self.id} is acquired')
+        Logger.proxy(f'Proxy {self.hostname} is acquired')
 
     def release(self):
         if self.available:
-            raise RuntimeError('Proxy ' + self + ' is not acquired')
+            raise RuntimeError('Proxy ' + self.hostname + ' is not acquired')
         self.available = True
-        Logger.proxy(f'Proxy {self.id} is released')
+        Logger.proxy(f'Proxy {self.hostname} is released')
 
     def execute(self, command: Command):
         Logger.proxy(f'Command will be sent to the worker: {command}')
@@ -95,11 +95,10 @@ class ProxyPool():
         id = max([proxy.id for proxy in self.proxies]) + 1 if len(self.proxies) > 0 else 0
         proxy = Proxy(id=id, hostname=hostname, connection=connection)
         self.proxies.add(proxy)
-        print(f'Proxy {proxy.hostname} is created and added to the pool')
+        Logger.proxy(f'Proxy {proxy.hostname} is created and added to the pool')
 
     @synchronized
     def acquire(self):
-        Logger.proxy(f'{self.proxies}')
         proxy = next((proxy for proxy in self.proxies if proxy.available), None)
         if not proxy:
             return None

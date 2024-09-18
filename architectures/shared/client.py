@@ -25,14 +25,12 @@ class Client():
         Logger.client(f'Client {self.id} is initialized')
 
     def train(self, model_src, model_target):
-        Logger.client(f'Client {self.id} entered the training function')
         proxy: Optional[Proxy] = None
         while not proxy:
             proxy = ProxyPool().acquire()
             if not proxy:
                 time.sleep(1)
-        print(f'Proxy {proxy} is acquired by {self}')
-        Logger.client(f'Proxy {proxy} is acquired by {self}')
+        Logger.client(f'Proxy {proxy.hostname} is acquired by client {self.id}')
         command = Command(
             action=CommandAction.TRAIN,
             model_type=self.model_type,
@@ -49,6 +47,7 @@ class Client():
         response: CommandResponse = proxy.execute(command)
         Logger.client(f'Command {command} is send to proxy at client {self.id}')
         ProxyPool().release(proxy)
+        Logger.client(f'Proxy {self.hostname} is released by client {self.id}')
         return response
 
 
@@ -61,4 +60,4 @@ class ClientPool():
         id = max([client.id for client in self.clients]) + 1 if len(self.clients) > 0 else 0
         client = Client(id, model_type, data)
         self.clients.add(client)
-        print(f'Client {client.id} added to the pool')
+        Logger.client(f'Client {client.id} added to the pool')
