@@ -38,7 +38,7 @@ class Server():
         server_socket = self._listen()
         self._setup_workers(server_socket)
         self._setup_architecture()
-        # self._train()
+        self._train()
         # self._notify()
 
     def _listen(self):
