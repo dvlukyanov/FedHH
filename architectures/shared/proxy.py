@@ -1,4 +1,5 @@
 import json
+from enum import Enum
 from dataclasses import asdict
 from typing import Any, Dict
 import pandas as pd
@@ -62,6 +63,8 @@ class Proxy():
         def convert(value):
             if isinstance(value, pd.DataFrame):
                 return value.to_dict(orient='records')
+            elif isinstance(value, Enum):
+                return value.name
             return value
         command_dict = asdict(command)
         Logger.proxy(f'command_dict: {command_dict}')
