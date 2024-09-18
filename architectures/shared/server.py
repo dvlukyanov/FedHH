@@ -38,7 +38,7 @@ class Server():
         server_socket = self._listen()
         self._setup_workers(server_socket)
         self._setup_architecture()
-        # self._train()
+        self._train()
         # self._notify()
 
     def _listen(self):
@@ -67,11 +67,13 @@ class Server():
                 futures = [executor.submit(edge.train) for edge in self.edge_pool.edges]
                 for future in concurrent.futures.as_completed(futures):
                     results.append(future.result())
-            self._extract()
-            self._evaluate()
-            if self.config['notification']['enabled']:
-                notify_slack(self.config['notification']['slack'], f'Epoch {epoch} completed. Training accuracy: {accuracy}. Validation accuracy: {accuracy}')
-            self._distribute()
+                for result in results:
+                    print(result)
+            # self._extract()
+            # self._evaluate()
+            # if self.config['notification']['enabled']:
+                # notify_slack(self.config['notification']['slack'], f'Epoch {epoch} completed. Training accuracy: {accuracy}. Validation accuracy: {accuracy}')
+            # self._distribute()
 
     def _extract(self):
         optimizer = model.optimizer(model)

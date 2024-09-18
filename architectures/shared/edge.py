@@ -47,11 +47,11 @@ class Edge():
                 futures = [executor.submit(client.train) for client in self.client_pool.clients]
                 for future in concurrent.futures.as_completed(futures):
                     future.result()
-            model = self._aggregate()
-            self._evaluate(model)
-            if Config()['notification']['enabled']:
-                notify_slack(Config()['notification']['slack'], f'Epoch {epoch} completed. Training accuracy: {accuracy}. Validation accuracy: {accuracy}')
-            self._distribute()
+            # model = self._aggregate()
+            # self._evaluate(model)
+            # if Config()['notification']['enabled']:
+            #     notify_slack(Config()['notification']['slack'], f'Epoch {epoch} completed. Training accuracy: {accuracy}. Validation accuracy: {accuracy}')
+            # self._distribute()
 
     def _aggregate(self):
         names = [client.model_name for client in self.client_pool.clients]
