@@ -57,13 +57,16 @@ class Proxy():
                 case _:
                     raise RuntimeError(f'Unknown result: {command}')
                 
-    def _serialize(obj: Any) -> str:
+    def _serialize(self, command: Any) -> str:
+        Logger.proxy(f'command: {command}')
         def convert(value):
             if isinstance(value, pd.DataFrame):
                 return value.to_dict(orient='records')
             return value
-        obj_dict = asdict(obj)
-        serializable_dict = {k: convert(v) for k, v in obj_dict.items()}
+        command_dict = asdict(command)
+        Logger.proxy(f'command_dict: {command_dict}')
+        serializable_dict = {k: convert(v) for k, v in command_dict.items()}
+        Logger.proxy(f'serializable_dict: {serializable_dict}')
         return json.dumps(serializable_dict)
                 
     def _receive_response(self):
