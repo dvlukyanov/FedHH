@@ -37,9 +37,9 @@ class Server():
     def serve(self):
         server_socket = self._listen()
         self._setup_workers(server_socket)
-        with open('/home/dlukyan/fedhh/models/server.log', 'w') as f: f.write('Workers are set')
+        with open('/home/dlukyan/fedhh/models/server.log', 'a') as f: f.write('Workers are set')
         self._setup_architecture()
-        with open('/home/dlukyan/fedhh/models/server.log', 'w') as f: f.write('Architecture is set')
+        with open('/home/dlukyan/fedhh/models/server.log', 'a') as f: f.write('Architecture is set')
         self._train()
         # self._notify()
 
@@ -67,7 +67,7 @@ class Server():
             results = []
             with concurrent.futures.ThreadPoolExecutor(max_workers=len(self.edge_pool.edges)) as executor:
                 futures = [executor.submit(edge.train) for edge in self.edge_pool.edges]
-                with open('/home/dlukyan/fedhh/models/server.log', 'w') as f: f.write('Futures are submitted')
+                with open('/home/dlukyan/fedhh/models/server.log', 'a') as f: f.write('Futures are submitted')
                 for future in concurrent.futures.as_completed(futures):
                     results.append(future.result())
                 for result in results:

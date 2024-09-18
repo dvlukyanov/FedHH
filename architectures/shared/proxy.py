@@ -21,7 +21,7 @@ class Proxy():
         self.hostname = hostname
         self.connection = connection
         self.available = True
-        with open('/home/dlukyan/fedhh/models/proxy.log', 'w') as f: f.write(f'Proxy {self.id} is initialized')
+        with open('/home/dlukyan/fedhh/models/proxy.log', 'a') as f: f.write(f'Proxy {self.id} is initialized')
 
     def acquire(self):
         if not self.available:
@@ -34,11 +34,11 @@ class Proxy():
         self.available = True
 
     def execute(self, command: Command):
-        with open('/home/dlukyan/fedhh/models/proxy.log', 'w') as f: f.write(f'Command will be sent to the worker: {command}')
+        with open('/home/dlukyan/fedhh/models/proxy.log', 'a') as f: f.write(f'Command will be sent to the worker: {command}')
         data = json.dumps(asdict(command)).encode('utf-8')
         self.connection.sendall(data)
         print(f'Command is sent to the worker: {command}')
-        with open('/home/dlukyan/fedhh/models/proxy.log', 'w') as f: f.write(f'Command is sent to the worker: {command}')
+        with open('/home/dlukyan/fedhh/models/proxy.log', 'a') as f: f.write(f'Command is sent to the worker: {command}')
         while True:
             response: CommandResponse = self._receive_response()
             if response is None:
@@ -96,6 +96,7 @@ class ProxyPool():
 
     @synchronized
     def acquire(self):
+        with open('/home/dlukyan/fedhh/models/proxy.log', 'a') as f: f.write(f'Acquiring: {self.proxies}')
         proxy = next((proxy for proxy in self.proxies if proxy.available), None)
         if not proxy:
             return None

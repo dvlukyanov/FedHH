@@ -27,7 +27,7 @@ class Edge():
         self.model_name = self._init_model()
         self.client_pool = ClientPool()
         self._setup_architecture()
-        with open('/home/dlukyan/fedhh/models/edge.log', 'w') as f: f.write(f'Edge {self.id} is initialized')
+        with open('/home/dlukyan/fedhh/models/edge.log', 'a') as f: f.write(f'Edge {self.id} is initialized')
 
     def _init_model(self):
         model = ModelFactory.create(self.model_type)
@@ -47,7 +47,7 @@ class Edge():
         for iteration in range(Config()['edge']['training']['iterations']):
             with concurrent.futures.ThreadPoolExecutor(max_workers=len(self.client_pool.clients)) as executor:
                 futures = [executor.submit(client.train, self.model_name, self._create_model_name(1, self.iteration)) for client in self.client_pool.clients]
-                with open('/home/dlukyan/fedhh/models/edge.log', 'w') as f: f.write(f'Futures are submitted at edge {self.id}')
+                with open('/home/dlukyan/fedhh/models/edge.log', 'a') as f: f.write(f'Futures are submitted at edge {self.id}')
                 for future in concurrent.futures.as_completed(futures):
                     future.result()
             # model = self._aggregate()

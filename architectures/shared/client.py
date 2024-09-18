@@ -21,7 +21,7 @@ class Client():
         self.id = id
         self.model_type = model_type
         self.data = data
-        with open('/home/dlukyan/fedhh/models/client.log', 'w') as f: f.write(f'Client {self.id} is initialized')
+        with open('/home/dlukyan/fedhh/models/client.log', 'a') as f: f.write(f'Client {self.id} is initialized')
 
     def train(self, model_src, model_target):
         proxy: Optional[Proxy] = None
@@ -30,6 +30,7 @@ class Client():
             if not proxy:
                 time.sleep(1)
         print(f'Proxy {proxy} is acquired by {self}')
+        with open('/home/dlukyan/fedhh/models/client.log', 'a') as f: f.write(f'Proxy {proxy} is acquired by {self}')
         command = Command(
             action=CommandAction.TRAIN,
             model_type=self.model_type,
@@ -42,9 +43,9 @@ class Client():
             test_ratio=0.2,
             seed=Config()['seed']
         )
-        with open('/home/dlukyan/fedhh/models/client.log', 'w') as f: f.write(f'Command is formed at client {self.id}')
+        with open('/home/dlukyan/fedhh/models/client.log', 'a') as f: f.write(f'Command is formed at client {self.id}')
         response: CommandResponse = proxy.execute(command)
-        with open('/home/dlukyan/fedhh/models/client.log', 'w') as f: f.write(f'Command {command} is send to proxy at client {self.id}')
+        with open('/home/dlukyan/fedhh/models/client.log', 'a') as f: f.write(f'Command {command} is send to proxy at client {self.id}')
         ProxyPool().release(proxy)
         return response
 
