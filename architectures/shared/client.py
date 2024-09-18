@@ -30,7 +30,8 @@ class Client():
             proxy = ProxyPool().acquire()
             if not proxy:
                 time.sleep(1)
-        command = Command(
+        try:
+            command = Command(
             action=CommandAction.TRAIN,
             model_type=self.model_type,
             folder=Config()['storage']['models'],
@@ -42,6 +43,8 @@ class Client():
             test_ratio=0.2,
             seed=Config()['seed']
         )
+        except Exception as e:
+            Logger.client(e)
         Logger.client(f'Command {command} is formed at client {self.id}')
         response: CommandResponse = proxy.execute(command)
         Logger.client(f'Command {command} is send to proxy at client {self.id}')
