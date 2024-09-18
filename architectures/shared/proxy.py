@@ -1,5 +1,7 @@
 import json
 from dataclasses import asdict
+from typing import Any, Dict
+import pandas as pd
 
 import sys
 import os
@@ -39,7 +41,7 @@ class Proxy():
     def execute(self, command: Command):
         Logger.proxy(f'Command will be sent to the worker: {command}')
         try:
-            data = json.dumps(asdict(command)).encode('utf-8')
+            data = self._serialize(command)
         except Exception as e:
             Logger.proxy(e)
         Logger.proxy(data)
@@ -54,6 +56,15 @@ class Proxy():
                     return response
                 case _:
                     raise RuntimeError(f'Unknown result: {command}')
+                
+    def _serialize(obj: Any) -> str:
+        def convert(value):
+            if isinstance(value, pd.DataFrame):
+                return value.to_dict(orient='records')
+            return value
+        obj_dict = asdict(obj)
+        serializable_dict = {k: convert(v) for k, v in obj_dict.items()}
+        return json.dumps(serializable_dict)
                 
     def _receive_response(self):
         data = self.connection.recv(1024)
