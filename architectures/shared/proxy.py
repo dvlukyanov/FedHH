@@ -38,7 +38,10 @@ class Proxy():
 
     def execute(self, command: Command):
         Logger.proxy(f'Command will be sent to the worker: {command}')
-        data = json.dumps(asdict(command)).encode('utf-8')
+        try:
+            data = json.dumps(asdict(command)).encode('utf-8')
+        except Exception as e:
+            Logger.proxy(e)
         Logger.proxy(data)
         self.connection.sendall(data)
         Logger.proxy(f'Command is sent to the worker: {command}')
