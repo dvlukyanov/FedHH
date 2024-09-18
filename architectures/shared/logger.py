@@ -15,18 +15,23 @@ class Logger():
     def __init__(self):
         self.folder = Config()['log']['folder']
 
+    @classmethod
     def server(self, msg):
         self.__log('server.log', msg)
 
+    @classmethod
     def edge(self, msg):
         self.__log('edge.log', msg)
 
+    @classmethod
     def client(self, msg):
         self.__log('client.log', msg)
 
+    @classmethod
     def proxy(self, msg):
         self.__log('proxy.log', msg)
 
+    @classmethod
     def worker(self, msg):
         self.__log('worker.log', msg)
 
