@@ -36,6 +36,7 @@ class Proxy():
         data = json.dumps(asdict(command)).encode('utf-8')
         self.connection.sendall(data)
         print(f'Command is sent to the worker: {command}')
+        open('/home/dlukyan/fedhh/models/log.txt', 'w').write(f'Command is sent to the worker: {command}')
         while True:
             response: CommandResponse = self._receive_response()
             if response is None:
