@@ -21,6 +21,7 @@ class Proxy():
         self.hostname = hostname
         self.connection = connection
         self.available = True
+        with open('/home/dlukyan/fedhh/models/proxy.log', 'w') as f: f.write(f'Proxy {self.id} is initialized')
 
     def acquire(self):
         if not self.available:

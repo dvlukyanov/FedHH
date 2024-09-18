@@ -21,6 +21,7 @@ class Client():
         self.id = id
         self.model_type = model_type
         self.data = data
+        with open('/home/dlukyan/fedhh/models/client.log', 'w') as f: f.write(f'Client {self.id} is initialized')
 
     def train(self, model_src, model_target):
         proxy: Optional[Proxy] = None
@@ -41,7 +42,9 @@ class Client():
             test_ratio=0.2,
             seed=Config()['seed']
         )
+        with open('/home/dlukyan/fedhh/models/client.log', 'w') as f: f.write(f'Command is formed at client {self.id}')
         response: CommandResponse = proxy.execute(command)
+        with open('/home/dlukyan/fedhh/models/client.log', 'w') as f: f.write(f'Command {command} is send to proxy at client {self.id}')
         ProxyPool().release(proxy)
         return response
 
