@@ -33,10 +33,11 @@ class Proxy():
         self.available = True
 
     def execute(self, command: Command):
+        with open('/home/dlukyan/fedhh/models/proxy.log', 'w') as f: f.write(f'Command will be sent to the worker: {command}')
         data = json.dumps(asdict(command)).encode('utf-8')
         self.connection.sendall(data)
         print(f'Command is sent to the worker: {command}')
-        open('/home/dlukyan/fedhh/models/log.txt', 'w').write(f'Command is sent to the worker: {command}')
+        with open('/home/dlukyan/fedhh/models/proxy.log', 'w') as f: f.write(f'Command is sent to the worker: {command}')
         while True:
             response: CommandResponse = self._receive_response()
             if response is None:
