@@ -36,7 +36,7 @@ class Logger():
     def worker(self, msg):
         self.__log('worker.log', msg)
 
-    @synchronized
     def __log(self, file, msg):
-        with open(self.folder + '/' + file, 'a') as f: f.write(msg + '\n')
+        with open(self.folder + '/' + file, 'a') as f: 
+            f.write(msg + '\n')
         print(msg)
