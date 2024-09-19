@@ -42,10 +42,10 @@ class Proxy():
     def execute(self, command: Command):
         # Logger.proxy(f'Command will be sent to the worker: {command}')
         data = self._serialize(command)
-        Logger.proxy(data)
+        # Logger.proxy(data)
         try:
-            Logger.proxy(type(data))
-            Logger.proxy(type(data.encode('utf-8')))
+            Logger.proxy(str(type(data)))
+            Logger.proxy(str(type(data.encode('utf-8'))))
             self.connection.sendall(data.encode('utf-8'))
             Logger.proxy("Command sent successfully")
         except Exception as e:
