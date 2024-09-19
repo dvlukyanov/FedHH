@@ -118,11 +118,29 @@ class Worker():
     
     def _get_data_loaders(self, command):
         dataset = CustomImageDataset(img_dir=Config()['storage']['data']['folder'], labels_file=Config()['storage']['data']['labels'])
-        train_indices, test_indices = train_test_split(command.items, test_size=command.test_ratio)
+        # train_indices, test_indices = train_test_split(command.items, test_size=command.test_ratio)
+        # train_dataset = Subset(dataset, train_indices)
+        # test_dataset = Subset(dataset, test_indices)
+        # train_loader = DataLoader(train_dataset, batch_size=command.batch_size, shuffle=True, num_workers=Config()['worker']['cpu_workers'])
+        # test_loader = DataLoader(test_dataset, batch_size=command.batch_size, shuffle=False, num_workers=Config()['worker']['cpu_workers'])
+        # return train_loader, test_loader
+        total_size = len(dataset)
+        Logger.worker(f'Total dataset size: {total_size}')
+
+        # Ensure command.items are within the bounds of the dataset
+        valid_items = [item for item in command.items if item < total_size]
+        Logger.worker(f'Valid items after filtering: {valid_items}')
+
+        train_indices, test_indices = train_test_split(valid_items, test_size=command.test_ratio)
         train_dataset = Subset(dataset, train_indices)
         test_dataset = Subset(dataset, test_indices)
+
+        # Log sizes of train and test datasets
+        Logger.worker(f'Train dataset size: {len(train_dataset)}, Test dataset size: {len(test_dataset)}')
+
         train_loader = DataLoader(train_dataset, batch_size=command.batch_size, shuffle=True, num_workers=Config()['worker']['cpu_workers'])
         test_loader = DataLoader(test_dataset, batch_size=command.batch_size, shuffle=False, num_workers=Config()['worker']['cpu_workers'])
+    
         return train_loader, test_loader
 
     def _train_model(self, model, criterion, optimizer, scheduler, data_loader):
