@@ -108,8 +108,8 @@ class Worker():
         train_history = []
         test_history = []
         for epoch in range(command.epochs):
-            train_metric: Metric = self._train_model(model.get_model(), criterion, optimizer, scheduler, train_loader)
-            test_metric: Metric = self._test_model(model.get_model(), criterion, test_loader)
+            train_metric: Metric = self._train_model(model, criterion, optimizer, scheduler, train_loader)
+            test_metric: Metric = self._test_model(model, criterion, test_loader)
             train_history.append(train_metric)
             test_history.append(test_metric)
             Logger.worker(f'Worker {self.address} trained {command.model_src} through {epoch+1} epochs. Test accuracy: {test_metric.accuracy}')
@@ -138,7 +138,7 @@ class Worker():
         for inputs, labels in data_loader:
             inputs, labels = inputs.to(self.device), labels.to(self.device)
             optimizer.zero_grad()
-            outputs = model(inputs)
+            outputs = model.get_model()(inputs)
             outputs = model.get_logits(outputs)
             loss = criterion(outputs, labels)
             loss.backward()
@@ -175,7 +175,7 @@ class Worker():
         with torch.no_grad():
             for inputs, labels in data_loader:
                 inputs, labels = inputs.to(self.device), labels.to(self.device)
-                outputs = model(inputs)
+                outputs = model.get_model(inputs)
                 outputs = model.get_logits(outputs)
                 loss = criterion(outputs, labels)
                 running_loss += loss.item()
