@@ -75,7 +75,7 @@ class Worker():
 
     def _receive_command(self):
         try:
-            data = self.socket.recv(1024 * 1024 * 10)
+            data = self.socket.recv(1024 * 1024 * 50)
         except Exception as e:
             Logger.worker(f"Error receiving data: {e}")
         if not data:
@@ -95,7 +95,7 @@ class Worker():
     def _train(self, command: Command):
         self._set_seed(command.seed)
         model = load_model(command.model_type, command.folder, command.model_src)
-        model.to(self.device)
+        model.get_model().to(self.device)
         Logger.worker(f'Worker {self.host} loaded a model: {model}')
         criterion = model.get_criterion()
         Logger.worker(f'{criterion}')
