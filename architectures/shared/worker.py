@@ -126,7 +126,7 @@ class Worker():
         # return train_loader, test_loader
         total_size = len(dataset)
         Logger.worker(f'Total dataset size: {total_size}')
-        Logger.worker(command)
+        Logger.worker(command.items)
         # Ensure command.items are within the bounds of the dataset
         valid_items = [item for item in command.items if item < total_size]
         Logger.worker(f'Valid items after filtering: {valid_items}')
