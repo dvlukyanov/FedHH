@@ -128,7 +128,7 @@ class Worker():
         Logger.worker(f'Total dataset size: {total_size}')
         Logger.worker(command.items.to_string())
         # Ensure command.items are within the bounds of the dataset
-        valid_items = [item for item in command.items if int(item) < total_size]
+        valid_items = [index for index in range(total_size)]
         Logger.worker(f'Valid items after filtering: {valid_items}')
 
         train_indices, test_indices = train_test_split(valid_items, test_size=command.test_ratio)
