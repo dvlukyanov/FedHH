@@ -108,8 +108,8 @@ class Worker():
         train_history = []
         test_history = []
         for epoch in range(command.epochs):
-            train_metric: Metric = self._train_model(model, criterion, optimizer, scheduler, train_loader)
-            test_metric: Metric = self._test_model(model, criterion, test_loader)
+            train_metric: Metric = self._train_model(model.get_model(), criterion, optimizer, scheduler, train_loader)
+            test_metric: Metric = self._test_model(model.get_model(), criterion, test_loader)
             train_history.append(train_metric)
             test_history.append(test_metric)
             Logger.worker(f'Worker {self.address} trained {command.model_src} through {epoch+1} epochs. Test accuracy: {test_metric.accuracy}')
@@ -118,29 +118,15 @@ class Worker():
     
     def _get_data_loaders(self, command):
         dataset = CustomImageDataset(img_dir=Config()['storage']['data']['folder'], labels_file=Config()['storage']['data']['labels'])
-        # train_indices, test_indices = train_test_split(command.items, test_size=command.test_ratio)
-        # train_dataset = Subset(dataset, train_indices)
-        # test_dataset = Subset(dataset, test_indices)
-        # train_loader = DataLoader(train_dataset, batch_size=command.batch_size, shuffle=True, num_workers=Config()['worker']['cpu_workers'])
-        # test_loader = DataLoader(test_dataset, batch_size=command.batch_size, shuffle=False, num_workers=Config()['worker']['cpu_workers'])
-        # return train_loader, test_loader
         total_size = len(dataset)
         Logger.worker(f'Total dataset size: {total_size}')
-        Logger.worker(command.items.to_string())
-        # Ensure command.items are within the bounds of the dataset
         valid_items = [index for index in range(total_size)]
-        Logger.worker(f'Valid items after filtering: {valid_items}')
-
         train_indices, test_indices = train_test_split(valid_items, test_size=command.test_ratio)
         train_dataset = Subset(dataset, train_indices)
         test_dataset = Subset(dataset, test_indices)
-
-        # Log sizes of train and test datasets
         Logger.worker(f'Train dataset size: {len(train_dataset)}, Test dataset size: {len(test_dataset)}')
-
         train_loader = DataLoader(train_dataset, batch_size=command.batch_size, shuffle=True, num_workers=Config()['worker']['cpu_workers'])
         test_loader = DataLoader(test_dataset, batch_size=command.batch_size, shuffle=False, num_workers=Config()['worker']['cpu_workers'])
-    
         return train_loader, test_loader
 
     def _train_model(self, model, criterion, optimizer, scheduler, data_loader):
