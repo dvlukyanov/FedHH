@@ -43,7 +43,11 @@ class Proxy():
         # Logger.proxy(f'Command will be sent to the worker: {command}')
         data = self._serialize(command)
         Logger.proxy(data)
-        self.connection.sendall(data)
+        try:
+            self.connection.sendall(data)
+            Logger.proxy("Command sent successfully")
+        except Exception as e:
+            Logger.proxy(f"Error sending data: {e}")
         Logger.proxy(f'Command is sent to the worker: {command}')
         while True:
             response: CommandResponse = self._receive_response()

@@ -74,7 +74,10 @@ class Worker():
             Logger.worker(f'Worker stopped')
 
     def _receive_command(self):
-        data = self.socket.recv(1024 * 1024 * 1024)
+        try:
+            data = self.socket.recv(1024 * 1024 * 1024)
+        except Exception as e:
+            Logger.worker(f"Error receiving data: {e}")
         if not data:
             return None
         Logger.worker(data)
