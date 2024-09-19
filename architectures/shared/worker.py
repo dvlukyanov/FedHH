@@ -55,10 +55,7 @@ class Worker():
     def _work(self):
         try:
             while True:
-                data = self._receive_command()
-                Logger.worker(data)
-                command: Command = data
-                # command: Command = self._receive_command()
+                command: Command = self._receive_command()
                 if command is None:
                     continue
                 match command.action:
@@ -77,12 +74,20 @@ class Worker():
             Logger.worker(f'Worker stopped')
 
     def _receive_command(self):
-        data = self.socket.recv(1024)
+        data = self.socket.recv(1024 * 1024 * 1024)
         if not data:
             return None
-        command: Command = Command(**json.loads(data.decode('utf-8')))
+        command: Command = self._deserialize(data)
         Logger.worker(f'Command is received: {command}')
         return command
+    
+    def _deserialize(data: str) -> Command:
+        data_dict = json.loads(data)
+        if 'action' in data_dict:
+            data_dict['action'] = CommandAction[data_dict['action']]
+        if 'items' in data_dict:
+            data_dict['items'] = data_dict['items']
+        return Command(**data_dict)
 
     def _train(self, command: Command):
         self._set_seed(command.seed)
