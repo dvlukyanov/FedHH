@@ -77,6 +77,7 @@ class Worker():
         data = self.socket.recv(1024 * 1024 * 1024)
         if not data:
             return None
+        Logger.worker(data)
         command: Command = self._deserialize(data)
         Logger.worker(f'Command is received: {command}')
         return command
