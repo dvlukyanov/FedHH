@@ -4,6 +4,7 @@ import socket
 import json
 from dataclasses import asdict
 import random
+import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_score, recall_score, f1_score, confusion_matrix
 import torch
@@ -15,7 +16,6 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')
 
 from architectures.shared.config import Config
 from architectures.shared.protocol import CommandAction, Command, CommandResult, Metric, CommandResponse
-from models.model_factory import ModelFactory
 from data.dataset import CustomImageDataset
 from architectures.shared.logger import Logger
 from architectures.shared.utils import load_model, save_model
@@ -89,7 +89,7 @@ class Worker():
         if 'action' in data_dict:
             data_dict['action'] = CommandAction[data_dict['action']]
         if 'items' in data_dict:
-            data_dict['items'] = data_dict['items']
+            data_dict['items'] = pd.DataFrame(data_dict['items'])
         return Command(**data_dict)
 
     def _train(self, command: Command):
@@ -98,11 +98,8 @@ class Worker():
         model.get_model().to(self.device)
         Logger.worker(f'Worker {self.host} loaded a model: {model}')
         criterion = model.get_criterion()
-        Logger.worker(f'{criterion}')
         optimizer = model.get_optimizer(model.get_model())
-        Logger.worker(f'{optimizer}')
         scheduler = model.get_scheduler(optimizer)
-        Logger.worker(f'{scheduler}')
         Logger.worker(f'Worker {self.host} initialized criterion, optimizer and scheduler')
 
         train_loader, test_loader = self._get_data_loaders(command)
