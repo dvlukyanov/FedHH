@@ -84,7 +84,7 @@ class Worker():
         Logger.worker(f'Command is received: {command}')
         return command
     
-    def _deserialize(data: str) -> Command:
+    def _deserialize(self, data: str) -> Command:
         data_dict = json.loads(data.decode('utf-8'))
         if 'action' in data_dict:
             data_dict['action'] = CommandAction[data_dict['action']]
