@@ -75,7 +75,7 @@ class Worker():
 
     def _receive_command(self):
         try:
-            data = self.socket.recv(1024 * 1024 * 1024)
+            data = self.socket.recv(1024 * 1024)
         except Exception as e:
             Logger.worker(f"Error receiving data: {e}")
         if not data:
