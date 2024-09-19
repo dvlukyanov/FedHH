@@ -95,11 +95,14 @@ class Worker():
     def _train(self, command: Command):
         self._set_seed(command.seed)
         model = load_model(command.model_type, command.folder, command.model_src)
+        Logger.worker(f'Worker {self.host} loaded a model: {model}')
         criterion = model.get_criterion()
-        optimizer = model.get_optimizer()
-        scheduler = model.get_scheduler()
+        optimizer = model.get_optimizer(command.model_type)
+        scheduler = model.get_scheduler(optimizer)
+        Logger.worker(f'Worker {self.host} initialized criterion, optimizer and scheduler')
 
         train_loader, test_loader = self._get_data_loaders(command)
+        Logger.worker(f'Worker {self.host} initialized data loaders')
 
         train_history = []
         test_history = []
@@ -108,6 +111,7 @@ class Worker():
             test_metric: Metric = self._test_model(model, criterion, test_loader)
             train_history.append(train_metric)
             test_history.append(test_metric)
+            Logger.worker(f'Worker {self.address} trained {command.model_src} through {epoch+1} epochs. Test accuracy: {test_metric.accuracy}')
             notify_slack(f'Worker {self.address} trained {command.model_src} through {epoch+1} epochs. Test accuracy: {test_metric.accuracy}')
         return model, train_history, test_history
     

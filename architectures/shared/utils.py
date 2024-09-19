@@ -25,7 +25,7 @@ def load_model(model_type, folder, model_name):
     model = ModelFactory.create(model_type)
     model.get_model().load_state_dict(torch.load(model_path))
     model.get_model().eval()
-    print(f"Model {model_name} ({model_type}) is loaded")
+    (f"Model {model_name} ({model_type}) is loaded")
     return model
 
 
