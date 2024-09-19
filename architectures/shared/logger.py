@@ -35,5 +35,5 @@ class Logger():
     @classmethod
     def __log(self, file, msg):
         with open(Config()['log']['folder'] + '/' + file, 'a') as f: 
-            f.write(msg + '\n')
+            f.write(msg[:Config()['log']['max_length']] + ("..." if len(msg) > Config()['log']['max_length'] else "") + '\n')
         print(msg)

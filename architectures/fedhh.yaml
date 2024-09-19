@@ -41,6 +41,7 @@ seed: 0
 
 log:
     folder: /home/dlukyan/fedhh/log
+    max_length: 1024
 
 notification:
   enable: True

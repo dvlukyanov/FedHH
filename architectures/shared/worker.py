@@ -80,7 +80,6 @@ class Worker():
             Logger.worker(f"Error receiving data: {e}")
         if not data:
             return None
-        Logger.worker(data)
         command: Command = self._deserialize(data)
         Logger.worker(f'Command is received: {command}')
         return command
