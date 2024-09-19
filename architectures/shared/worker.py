@@ -99,7 +99,7 @@ class Worker():
         Logger.worker(f'Worker {self.host} loaded a model: {model}')
         criterion = model.get_criterion()
         Logger.worker(f'{criterion}')
-        optimizer = model.get_optimizer(model)
+        optimizer = model.get_optimizer(model.get_model())
         Logger.worker(f'{optimizer}')
         scheduler = model.get_scheduler(optimizer)
         Logger.worker(f'{scheduler}')
