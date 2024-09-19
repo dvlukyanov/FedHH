@@ -44,7 +44,7 @@ class Proxy():
         data = self._serialize(command)
         Logger.proxy(data)
         try:
-            self.connection.sendall(data)
+            self.connection.sendall(data.encode('utf-8'))
             Logger.proxy("Command sent successfully")
         except Exception as e:
             Logger.proxy(f"Error sending data: {e}")
