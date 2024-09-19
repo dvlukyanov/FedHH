@@ -75,7 +75,7 @@ class Worker():
 
     def _receive_command(self):
         try:
-            data = self.socket.recv(1024 * 1024 * 50)
+            data = self.socket.recv(1024 * 1024 * 1024)
         except Exception as e:
             Logger.worker(f"Error receiving data: {e}")
         if not data:
@@ -126,7 +126,7 @@ class Worker():
         # return train_loader, test_loader
         total_size = len(dataset)
         Logger.worker(f'Total dataset size: {total_size}')
-
+        Logger.worker(command)
         # Ensure command.items are within the bounds of the dataset
         valid_items = [item for item in command.items if item < total_size]
         Logger.worker(f'Valid items after filtering: {valid_items}')
