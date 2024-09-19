@@ -75,7 +75,7 @@ class Worker():
 
     def _receive_command(self):
         try:
-            data = self.socket.recv(1024 * 1024)
+            data = self.socket.recv(1024 * 1024 * 10)
         except Exception as e:
             Logger.worker(f"Error receiving data: {e}")
         if not data:
@@ -97,8 +97,11 @@ class Worker():
         model = load_model(command.model_type, command.folder, command.model_src)
         Logger.worker(f'Worker {self.host} loaded a model: {model}')
         criterion = model.get_criterion()
+        Logger.worker(f'{criterion}')
         optimizer = model.get_optimizer(command.model_type)
+        Logger.worker(f'{optimizer}')
         scheduler = model.get_scheduler(optimizer)
+        Logger.worker(f'{scheduler}')
         Logger.worker(f'Worker {self.host} initialized criterion, optimizer and scheduler')
 
         train_loader, test_loader = self._get_data_loaders(command)
