@@ -95,10 +95,11 @@ class Worker():
     def _train(self, command: Command):
         self._set_seed(command.seed)
         model = load_model(command.model_type, command.folder, command.model_src)
+        model.to(self.device)
         Logger.worker(f'Worker {self.host} loaded a model: {model}')
         criterion = model.get_criterion()
         Logger.worker(f'{criterion}')
-        optimizer = model.get_optimizer(command.model_type)
+        optimizer = model.get_optimizer(model)
         Logger.worker(f'{optimizer}')
         scheduler = model.get_scheduler(optimizer)
         Logger.worker(f'{scheduler}')
