@@ -175,7 +175,7 @@ class Worker():
         with torch.no_grad():
             for inputs, labels in data_loader:
                 inputs, labels = inputs.to(self.device), labels.to(self.device)
-                outputs = model.get_model(inputs)
+                outputs = model.get_model()(inputs)
                 outputs = model.get_logits(outputs)
                 loss = criterion(outputs, labels)
                 running_loss += loss.item()
