@@ -112,8 +112,9 @@ class Worker():
             test_metric: Metric = self._test_model(model, criterion, test_loader)
             train_history.append(train_metric)
             test_history.append(test_metric)
-            Logger.worker(f'Worker {self.address} trained {command.model_src} through {epoch+1} epochs. Test accuracy: {test_metric.accuracy}')
-            notify_slack(f'Worker {self.address} trained {command.model_src} through {epoch+1} epochs. Test accuracy: {test_metric.accuracy}')
+            Logger.worker(f'Worker {self.address} trained {command.model_target} through {epoch+1} epochs. Test accuracy: {test_metric.accuracy}')
+            Logger.worker(test_metric)
+            notify_slack(f'Worker {self.address} trained {command.model_target} through {epoch+1} epochs. Test accuracy: {test_metric.accuracy}')
         return model, train_history, test_history
     
     def _get_data_loaders(self, command):
