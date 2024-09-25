@@ -69,7 +69,7 @@ class Proxy():
         return json.dumps(serializable_dict)
                 
     def _receive_response(self):
-        data = self.connection.recv(1024)
+        data = self.connection.recv(1024 * 1024 * 1024)
         if not data:
             return None
         response: CommandResponse = self._deserialize(data)

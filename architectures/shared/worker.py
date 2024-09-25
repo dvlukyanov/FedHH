@@ -64,6 +64,7 @@ class Worker():
                     case CommandAction.TRAIN:
                         model, train_history, test_history = self._train(command)
                         save_model(model.get_model(), command.model_type, command.folder, command.model_target)
+                        Logger.worker(f'Model {command.model_target} is saved')
                         self._send_response(CommandResult.DONE, train_history, test_history)
                     case CommandAction.STOP:
                         break
@@ -211,6 +212,7 @@ class Worker():
 
     def _send_response(self, result: CommandResponse, train_history, test_history):
         response = CommandResponse(result=result, train_history=train_history, test_history=test_history)
+        Logger.worker(f'Command response {response} will be sent')
         data = self._serialize(response)
         self.socket.sendall(data)
         Logger.worker(f'Response is sent to the server: {response}')
