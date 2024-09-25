@@ -37,13 +37,7 @@ class Logger():
     @classmethod
     def __log(self, file, msg):
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-        if not isinstance(msg, str):
-            if isinstance(msg, Metric):
-                msg = str(msg)
-            else:
-                msg = str(msg)
-
+        msg = str(msg) if not isinstance(msg, str) else msg
         log_msg = f"[{timestamp}] {msg[:Config()['log']['max_length']]}" + ("..." if len(msg) > Config()['log']['max_length'] else "") + "\n"
         with open(Config()['log']['folder'] + '/' + file, 'a') as f:
             f.write(log_msg)
