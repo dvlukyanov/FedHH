@@ -4,6 +4,7 @@ from datetime import datetime
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
 from architectures.shared.config import Config
+from architectures.shared.protocol import Metric
 
 
 __author__ = 'Dmitry Lukyanov'
@@ -35,9 +36,15 @@ class Logger():
 
     @classmethod
     def __log(self, file, msg):
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Get the current time in a readable format
-        log_msg = f"[{timestamp}] {msg[:Config()['log']['max_length']]}" + \
-              ("..." if len(msg) > Config()['log']['max_length'] else "") + "\n"
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        if not isinstance(msg, str):
+            if isinstance(msg, Metric):
+                msg = str(msg)
+            else:
+                msg = str(msg)
+
+        log_msg = f"[{timestamp}] {msg[:Config()['log']['max_length']]}" + ("..." if len(msg) > Config()['log']['max_length'] else "") + "\n"
         with open(Config()['log']['folder'] + '/' + file, 'a') as f:
             f.write(log_msg)
         print(log_msg)
