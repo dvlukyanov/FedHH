@@ -226,6 +226,10 @@ class Worker():
                 return value.name
             elif isinstance(value, np.ndarray):
                 return value.tolist()
+            elif isinstance(value, list):
+                return [convert(item) for item in value]
+            elif hasattr(value, '__dict__'):
+                return {k: convert(v) for k, v in vars(value).items()}
             return value
         command_dict = asdict(command)
         serializable_dict = {k: convert(v) for k, v in command_dict.items()}

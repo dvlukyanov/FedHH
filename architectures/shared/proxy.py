@@ -3,13 +3,14 @@ from enum import Enum
 from dataclasses import asdict
 from typing import Any, Dict
 import pandas as pd
+import numpy as np
 
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
 from architectures.shared.synchronized import synchronized
-from architectures.shared.protocol import Command, CommandResponse, CommandResult
+from architectures.shared.protocol import Command, CommandResponse, CommandResult, Metric
 from architectures.shared.logger import Logger
 
 
@@ -77,11 +78,19 @@ class Proxy():
         return response
     
     def _deserialize(self, data: str) -> Command:
+        def _deserialize_metric(self, metric_dict: dict) -> Metric:
+            if 'cmatrix' in metric_dict and isinstance(metric_dict['cmatrix'], list):
+                metric_dict['cmatrix'] = np.array(metric_dict['cmatrix'])
+            return Metric(**metric_dict)
         data_dict = json.loads(data.decode('utf-8'))
         if 'result' in data_dict:
             data_dict['result'] = CommandResponse[data_dict['result']]
         if 'items' in data_dict:
             data_dict['items'] = pd.DataFrame(data_dict['items'])
+        if 'train_history' in data_dict:
+            data_dict['train_history'] = [self._deserialize_metric(m) for m in data_dict['train_history']]
+        if 'test_history' in data_dict:
+            data_dict['test_history'] = [self._deserialize_metric(m) for m in data_dict['test_history']]
         return Command(**data_dict)
 
     def __members(self):
