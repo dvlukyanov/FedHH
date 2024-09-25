@@ -219,7 +219,7 @@ class Worker():
         Logger.worker(f'Response is sent to the server: {response}')
 
     def _serialize(self, command: Any) -> str:
-        def convert(value):
+        def convert(value: Any) -> Any:
             if isinstance(value, pd.DataFrame):
                 return value.to_dict(orient='records')
             elif isinstance(value, Enum):
