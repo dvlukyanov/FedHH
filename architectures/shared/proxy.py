@@ -72,9 +72,17 @@ class Proxy():
         data = self.connection.recv(1024)
         if not data:
             return None
-        response: CommandResponse = CommandResponse(**json.loads(data.decode('utf-8')))
+        response: CommandResponse = self._deserialize(data)
         print(f'Response is received: {response}')
         return response
+    
+    def _deserialize(self, data: str) -> Command:
+        data_dict = json.loads(data.decode('utf-8'))
+        if 'result' in data_dict:
+            data_dict['result'] = CommandResponse[data_dict['result']]
+        if 'items' in data_dict:
+            data_dict['items'] = pd.DataFrame(data_dict['items'])
+        return Command(**data_dict)
 
     def __members(self):
         return (self.id)

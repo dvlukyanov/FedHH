@@ -1,5 +1,4 @@
 import os
-import numpy as np
 from sklearn.model_selection import StratifiedKFold
 import torch
 
@@ -7,7 +6,6 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
-from architectures.shared.config import Config
 from models.model_factory import ModelFactory
 
 def split_data(df, folds):

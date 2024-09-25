@@ -2,7 +2,9 @@ import os
 import time
 import socket
 import json
+from enum import Enum
 from dataclasses import asdict
+from typing import Any
 import random
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -209,6 +211,17 @@ class Worker():
 
     def _send_response(self, result: CommandResponse, train_history, test_history):
         response = CommandResponse(result=result, train_history=train_history, test_history=test_history)
-        data = json.dumps(asdict(response)).encode('utf-8')
+        data = self._serialize(response)
         self.socket.sendall(data)
         Logger.worker(f'Response is sent to the server: {response}')
+
+    def _serialize(self, command: Any) -> str:
+        def convert(value):
+            if isinstance(value, pd.DataFrame):
+                return value.to_dict(orient='records')
+            elif isinstance(value, Enum):
+                return value.name
+            return value
+        command_dict = asdict(command)
+        serializable_dict = {k: convert(v) for k, v in command_dict.items()}
+        return json.dumps(serializable_dict)
