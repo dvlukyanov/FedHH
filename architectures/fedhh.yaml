@@ -35,7 +35,7 @@ storage:
     models: /home/dlukyan/fedhh/models
     data:
         folder: /storage/fedhh/data/micro
-        labels: /storage/fedhh/labels.csv
+        labels: /storage/fedhh/data/micro/labels.csv
 
 seed: 0
 
