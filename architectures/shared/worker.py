@@ -231,6 +231,10 @@ class Worker():
             elif hasattr(value, '__dict__'):
                 return {k: convert(v) for k, v in vars(value).items()}
             return value
-        command_dict = asdict(command)
-        serializable_dict = {k: convert(v) for k, v in command_dict.items()}
-        return json.dumps(serializable_dict)
+        try:
+            command_dict = asdict(command)
+            serializable_dict = {k: convert(v) for k, v in command_dict.items()}
+            return json.dumps(serializable_dict)
+        except Exception as e:
+            Logger.worker(f"Serialization error: {e}")  # Print error message for debugging
+            raise
