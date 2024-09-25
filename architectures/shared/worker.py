@@ -63,7 +63,7 @@ class Worker():
                 match command.action:
                     case CommandAction.TRAIN:
                         model, train_history, test_history = self._train(command)
-                        save_model(model, command.model_type, command.folder, command.model_target)
+                        save_model(model.get_model(), command.model_type, command.folder, command.model_target)
                         self._send_response(CommandResult.DONE, train_history, test_history)
                     case CommandAction.STOP:
                         break
