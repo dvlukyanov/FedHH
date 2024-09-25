@@ -7,6 +7,7 @@ from dataclasses import asdict
 from typing import Any
 import random
 import pandas as pd
+import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_score, recall_score, f1_score, confusion_matrix
 import torch
@@ -223,6 +224,8 @@ class Worker():
                 return value.to_dict(orient='records')
             elif isinstance(value, Enum):
                 return value.name
+            elif isinstance(value, np.ndarray):
+                return value.tolist()
             return value
         command_dict = asdict(command)
         serializable_dict = {k: convert(v) for k, v in command_dict.items()}
