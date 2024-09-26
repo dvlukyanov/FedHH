@@ -220,7 +220,7 @@ class Worker():
 
     def _serialize(self, command: Any) -> str:
         def convert(value: Any) -> Any:
-            Logger.worker(f'{value}: {isinstance(value)}')
+            # Logger.worker(f'{value}: {isinstance(value)}')
             if isinstance(value, pd.DataFrame):
                 return value.to_dict(orient='records')
             elif isinstance(value, Enum):
