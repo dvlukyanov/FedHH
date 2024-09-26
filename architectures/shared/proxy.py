@@ -52,6 +52,7 @@ class Proxy():
             response: CommandResponse = self._receive_response()
             if response is None:
                 continue
+            Logger.proxy(response)
             match response.result:
                 case CommandResult.DONE:
                     return response
