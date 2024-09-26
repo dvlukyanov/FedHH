@@ -52,7 +52,6 @@ class Proxy():
             response: CommandResponse = self._receive_response()
             if response is None:
                 continue
-            Logger.proxy(response)
             match response.result:
                 case CommandResult.DONE:
                     return response
@@ -71,7 +70,10 @@ class Proxy():
         return json.dumps(serializable_dict)
                 
     def _receive_response(self):
-        data = self.connection.recv(1024 * 1024 * 1024)
+        try:
+            data = self.connection.recv(1024 * 1024 * 1024)
+        except Exception as e:
+            Logger.proxy(f"Error receiving data: {e}")
         if not data:
             return None
         response: CommandResponse = self._deserialize(data)
