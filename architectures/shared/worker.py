@@ -201,7 +201,7 @@ class Worker():
             precision=precision,
             recall=recall,
             f1=f1,
-            cmatrix=conf_matrix
+            # cmatrix=conf_matrix
         )
     
     def _set_seed(self, seed):
