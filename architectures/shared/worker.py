@@ -161,14 +161,14 @@ class Worker():
         precision = precision_score(all_labels, all_predictions, average='weighted')
         recall = recall_score(all_labels, all_predictions, average='weighted')
         f1 = f1_score(all_labels, all_predictions, average='weighted')
-        conf_matrix = confusion_matrix(all_labels, all_predictions)
+        # conf_matrix = confusion_matrix(all_labels, all_predictions)
         return Metric(
             loss=loss,
             accuracy=accuracy,
             precision=precision,
             recall=recall,
             f1=f1,
-            cmatrix=conf_matrix
+            # cmatrix=conf_matrix
         )
 
     def _test_model(self, model, criterion, data_loader):
