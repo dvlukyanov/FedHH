@@ -76,6 +76,7 @@ class Proxy():
             Logger.proxy(f"Error receiving data: {e}")
         if not data:
             return None
+        Logger.proxy(data)
         response: CommandResponse = self._deserialize(data)
         print(f'Response is received: {response}')
         return response
