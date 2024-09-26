@@ -76,7 +76,7 @@ class Proxy():
             Logger.proxy(f"Error receiving data: {e}")
         if not data:
             return None
-        Logger.proxy(data)
+        # Logger.proxy(data)
         response: CommandResponse = self._deserialize(data)
         print(f'Response is received: {response}')
         return response
@@ -95,6 +95,7 @@ class Proxy():
             data_dict['train_history'] = [self._deserialize_metric(m) for m in data_dict['train_history']]
         if 'test_history' in data_dict:
             data_dict['test_history'] = [self._deserialize_metric(m) for m in data_dict['test_history']]
+        Logger.proxy(data_dict)
         return Command(**data_dict)
 
     def __members(self):
