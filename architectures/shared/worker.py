@@ -215,7 +215,7 @@ class Worker():
         response = CommandResponse(result=result, train_history=train_history, test_history=test_history)
         Logger.worker(f'Command response {response} will be sent')
         data = self._serialize(response)
-        self.socket.sendall(data)
+        self.socket.sendall(data.encode('utf-8'))
         Logger.worker(f'Response is sent to the server: {response}')
 
     def _serialize(self, command: Any) -> str:
