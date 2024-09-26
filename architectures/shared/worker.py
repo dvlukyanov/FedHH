@@ -194,7 +194,7 @@ class Worker():
         precision = precision_score(all_labels, all_predictions, average='weighted')
         recall = recall_score(all_labels, all_predictions, average='weighted')
         f1 = f1_score(all_labels, all_predictions, average='weighted')
-        conf_matrix = confusion_matrix(all_labels, all_predictions)
+        # conf_matrix = confusion_matrix(all_labels, all_predictions)
         return Metric(
             loss=loss,
             accuracy=accuracy,

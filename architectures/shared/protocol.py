@@ -40,7 +40,7 @@ class Metric():
     precision: float
     recall: float
     f1: float
-    cmatrix: np.ndarray
+    # cmatrix: np.ndarray
 
 @dataclass
 class CommandResponse():
