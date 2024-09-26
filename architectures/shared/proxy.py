@@ -87,6 +87,7 @@ class Proxy():
                 metric_dict['cmatrix'] = np.array(metric_dict['cmatrix'])
             return Metric(**metric_dict)
         data_dict = json.loads(data.decode('utf-8'))
+        Logger.proxy(data_dict)
         if 'result' in data_dict:
             data_dict['result'] = CommandResponse[data_dict['result']]
         if 'items' in data_dict:
@@ -95,7 +96,6 @@ class Proxy():
             data_dict['train_history'] = [self._deserialize_metric(m) for m in data_dict['train_history']]
         if 'test_history' in data_dict:
             data_dict['test_history'] = [self._deserialize_metric(m) for m in data_dict['test_history']]
-        Logger.proxy(data_dict)
         return Command(**data_dict)
 
     def __members(self):
